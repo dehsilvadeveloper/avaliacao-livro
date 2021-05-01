@@ -1,0 +1,41 @@
+<?php
+namespace {{ namespace }};
+
+class {{ class }} {
+
+    // Defino variaveis
+    private $definition = 'Responsável por agrupar e executar uma ou mais ações que serão utilizadas num determinado propósito';
+
+    /**
+     * 
+     * Método construtor
+     *
+     * @access public
+     * @return void
+     * 
+     */
+    public function __construct() {
+
+        //
+
+    }
+
+
+
+    /**
+     * 
+     * Executa tarefa única da classe
+     *
+     * @access public
+     * @return void
+     * 
+     */
+    public function execute() : void {
+
+        //
+
+    }
+
+
+
+}

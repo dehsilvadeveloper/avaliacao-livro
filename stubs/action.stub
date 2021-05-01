@@ -1,0 +1,44 @@
+<?php
+namespace {{ namespace }};
+
+// Importando models
+use App\Models\{{ model }};
+
+class {{ class }} {
+
+    // Defino variaveis
+    private $definition = 'Responsável por executar uma única tarefa';
+
+    /**
+     * 
+     * Método construtor
+     *
+     * @access public
+     * @return void
+     * 
+     */
+    public function __construct() {
+
+        //
+
+    }
+
+
+
+    /**
+     * 
+     * Executa tarefa única da classe
+     *
+     * @access public
+     * @return void
+     * 
+     */
+    public function execute() : void {
+
+        //
+
+    }
+
+
+
+}
