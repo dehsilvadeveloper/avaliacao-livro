@@ -37,7 +37,7 @@ Route::get('livros/pesquisar', 'App\Http\Controllers\Api\PesquisaLivroController
 //Route::put('livros/{livro}/foto-capa', 'App\Http\Controllers\Api\FotoCapaDeLivroController@update')->name('livros.foto-capa.update');
 Route::apiResource('livros', 'App\Http\Controllers\Api\LivroController');
 
-//Route::apiResource('livros.avaliacoes', 'App\Http\Controllers\Api\AvaliacaoDeLivroController')->only(['index', 'store']);
+Route::apiResource('livros.avaliacoes', 'App\Http\Controllers\Api\AvaliacaoDeLivroController')->only(['index', 'store']);
 
 Route::apiResource('avaliacoes', 'App\Http\Controllers\Api\AvaliacaoController')->only(['show', 'update', 'destroy']);
 

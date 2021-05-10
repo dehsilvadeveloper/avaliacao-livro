@@ -51,6 +51,9 @@ class ApagarLivroAction {
         $livro->generos()->detach();
         $livro->series()->detach();
 
+        // Removemos registros relacionados
+        $livro->avaliacoes()->delete();
+
         // Removemos registro
         $livro->delete();
 

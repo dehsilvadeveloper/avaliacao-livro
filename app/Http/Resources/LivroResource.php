@@ -3,8 +3,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\Models\SerieLivro;
-
 class LivroResource extends JsonResource {
 
     /**
@@ -28,18 +26,19 @@ class LivroResource extends JsonResource {
             'tipo_capa' => $this->tipo_capa,
             'string_tipo_capa' => $this->string_tipo_capa,
             'foto_capa' => $this->foto_capa,
-            //'avaliacao_media' => $this->avaliacoes->avg('avaliacao'),
+            'total_avaliacoes' => (int) ($this->avaliacoes_count != '') ? $this->avaliacoes_count : $this->avaliacoes->count(),
+            'avaliacao_media' => $this->avaliacoes->avg('nota'),
+            'status' => $this->status,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
             'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s'),
             'quanto_tempo_registrado' => $this->quanto_tempo_registrado,
-            'status' => $this->status,
             // Relações
             'relationships' => [
                 'editora' => new EditoraResource($this->editora),
                 'autores' => new AutorCollection($this->whenLoaded('autores')),
                 'generos' => new GeneroCollection($this->whenLoaded('generos')),
                 'series' => new SerieCollection($this->whenLoaded('series')),
-                //'avaliacoes' => new AvaliacaoCollection($this->whenLoaded('avaliacoes'))
+                'avaliacoes' => new AvaliacaoCollection($this->whenLoaded('avaliacoes'))
             ]
         ];
 

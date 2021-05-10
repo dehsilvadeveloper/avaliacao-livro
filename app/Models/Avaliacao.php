@@ -15,8 +15,8 @@ class Avaliacao extends Model {
     public $timestamps = true; // ativa os campos created_at e updated_at
 
     protected $fillable = [
-        'cod_usuario',
         'cod_livro',
+        'cod_usuario',
         'nota',
         'review'
     ];

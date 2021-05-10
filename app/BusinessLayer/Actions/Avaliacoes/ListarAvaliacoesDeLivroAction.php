@@ -1,12 +1,12 @@
 <?php
-namespace App\BusinessLayer\Actions\Livros;
+namespace App\BusinessLayer\Actions\Avaliacoes;
 
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importando models
-use App\Models\Livro;
+use App\Models\Avaliacao;
 
-class ListarLivrosAction {
+class ListarAvaliacoesDeLivroAction {
 
     // Defino variaveis
     private $definition = 'Responsável por executar uma única tarefa';
@@ -32,16 +32,15 @@ class ListarLivrosAction {
      * Executa tarefa única da classe
      *
      * @access public
+     * @param int $codLivro
      * @return object
      * 
      */
-    public function execute() : object {
+    public function execute(int $codLivro) : object {
 
-        $livros = Livro::with(['autores', 'generos', 'series'])
-                       ->withCount('avaliacoes')
-                       ->get();
+        $avaliacoes = Avaliacao::where('cod_livro', '=', $codLivro)->get();
 
-        return $livros;
+        return $avaliacoes;
 
     }
 

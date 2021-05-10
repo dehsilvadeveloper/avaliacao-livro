@@ -1,12 +1,12 @@
 <?php
-namespace App\BusinessLayer\Actions\Livros;
+namespace App\BusinessLayer\Actions\Avaliacoes;
 
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importando models
-use App\Models\Livro;
+use App\Models\Avaliacao;
 
-class ListarLivrosAction {
+class VerAvaliacaoAction {
 
     // Defino variaveis
     private $definition = 'Responsável por executar uma única tarefa';
@@ -32,16 +32,22 @@ class ListarLivrosAction {
      * Executa tarefa única da classe
      *
      * @access public
+     * @param int $codAvaliacao
      * @return object
      * 
      */
-    public function execute() : object {
+    public function execute(int $codAvaliacao) : object {
 
-        $livros = Livro::with(['autores', 'generos', 'series'])
-                       ->withCount('avaliacoes')
-                       ->get();
+        $avaliacao = Avaliacao::with(['livro', 'usuario'])
+                              ->find($codAvaliacao);
 
-        return $livros;
+        if (!$avaliacao) {
+
+            throw new \Exception('Avaliação não localizada', ResponseHttpCode::NOT_FOUND);
+
+        }
+
+        return $avaliacao;
 
     }
 

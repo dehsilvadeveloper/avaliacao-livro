@@ -98,7 +98,6 @@ Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades
 ## TO DO
 
 - Token de autenticação para proteger endpoints
-- Fluxo de avaliação de livro
 - Listagem de livros filtrados por editora, gênero, autor e série
 - Upload de imagem para foto da capa do livro
 - Autenticação de usuário

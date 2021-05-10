@@ -38,7 +38,8 @@ class VerLivroAction {
      */
     public function execute(int $codLivro) : object {
 
-        $livro = Livro::with(['autores', 'generos', 'series'])
+        $livro = Livro::with(['autores', 'generos', 'series', 'avaliacoes'])
+                      ->withCount('avaliacoes')
                       ->find($codLivro);
 
         if (!$livro) {

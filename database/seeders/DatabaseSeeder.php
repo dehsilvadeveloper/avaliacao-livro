@@ -10,6 +10,7 @@ use App\Models\Editora;
 use App\Models\Genero;
 use App\Models\Serie;
 use App\Models\Livro;
+use App\Models\Usuario;
 
 class DatabaseSeeder extends Seeder {
 

@@ -3,7 +3,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AutorResource extends JsonResource {
+class AvaliacaoResource extends JsonResource {
 
     /**
      * Transform the resource into an array.
@@ -13,17 +13,16 @@ class AutorResource extends JsonResource {
      */
     public function toArray($request) {
         
-        return [
-            'cod_autor' => (int) $this->cod_autor,
-            'nome' => $this->nome,
-            'data_nascimento' => isset($this->data_nascimento) ? $this->data_nascimento->format('d/m/Y') : null,
-            'website' => $this->website,
-            'twitter' => $this->twitter,
+        return[
+            'cod_avaliacao' => (int) $this->cod_avaliacao,
+            'nota' => (int) $this->nota,
+            'review' => $this->review,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
             'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s'),
             // Relações
             'relationships' => [
-                'pais' => new PaisResource($this->nacionalidade)
+                'usuario' => new UsuarioResource($this->usuario),
+                'livro' => new LivroWithoutRelationshipsResource($this->whenLoaded('livro'))
             ]
         ];
 

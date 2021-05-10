@@ -90,7 +90,7 @@ class Livro extends Model {
     public function avaliacoes() {
 
         // HAS MANY: model, chave estrangeira, chave local
-        return $this->hasMany(Avaliacao::class, 'cod_avaliacao', 'cod_avaliacao');
+        return $this->hasMany(Avaliacao::class, 'cod_livro', 'cod_livro');
 
     }
 
