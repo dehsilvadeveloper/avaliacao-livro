@@ -56,6 +56,10 @@ class EditoraController extends Controller {
         $this->verEditoraFeature = $verEditoraFeature;
         $this->apagarEditoraFeature = $apagarEditoraFeature;
 
+        // Defino que todas as rotas/métodos deste controller estarão protegidas pelo middleware de autenticação
+        // Quaisquer rotas dentro da opção EXCEPT() ficarão FORA da proteção do middleware, ou seja, serão PÚBLICAS
+        $this->middleware('auth:sanctum')->except(['index','show']);
+
     }
 
 

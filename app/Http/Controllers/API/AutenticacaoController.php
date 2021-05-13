@@ -6,48 +6,98 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarAvaliacaoDTO;
+use App\DataLayer\DTOs\EfetuarLoginDTO;
 
 // Importo features
-use App\BusinessLayer\Features\Avaliacoes\AtualizarAvaliacaoFeature;
-use App\BusinessLayer\Features\Avaliacoes\VerAvaliacaoFeature;
-use App\BusinessLayer\Features\Avaliacoes\ApagarAvaliacaoFeature;
+use App\BusinessLayer\Features\Autenticacoes\EfetuarLoginFeature;
+use App\BusinessLayer\Features\Autenticacoes\EfetuarLogoutFeature;
+use App\BusinessLayer\Features\Autenticacoes\VerUsuarioAutenticadoFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
 
-class AvaliacaoController extends Controller {
+class AutenticacaoController extends Controller {
 
     // Defino variaveis
-    private $atualizarAvaliacaoFeature;
-    private $verAvaliacaoFeature;
-    private $apagarAvaliacaoFeature;
+    private $efetuarLoginFeature;
+    private $efetuarLogoutFeature;
+    private $verUsuarioAutenticadoFeature;
 
     /**
      * 
      * Método construtor
      * 
      * @access public
-     * @param AtualizarAvaliacaoFeature $atualizarAvaliacaoFeature
-     * @param VerAvaliacaoFeature $verAvaliacaoFeature
-     * @param ApagarAvaliacaoFeature $apagarAvaliacaoFeature
+     * @param EfetuarLoginFeature $efetuarLoginFeature,
+     * @param EfetuarLogoutFeature $efetuarLogoutFeature,
+     * @param VerUsuarioAutenticadoFeature $verUsuarioAutenticadoFeature
      * @return void
      * 
      */
     public function __construct(
-        AtualizarAvaliacaoFeature $atualizarAvaliacaoFeature,
-        VerAvaliacaoFeature $verAvaliacaoFeature,
-        ApagarAvaliacaoFeature $apagarAvaliacaoFeature
+        EfetuarLoginFeature $efetuarLoginFeature,
+        EfetuarLogoutFeature $efetuarLogoutFeature,
+        VerUsuarioAutenticadoFeature $verUsuarioAutenticadoFeature
     ) {
 
         // Instancio features
-        $this->atualizarAvaliacaoFeature = $atualizarAvaliacaoFeature;
-        $this->verAvaliacaoFeature = $verAvaliacaoFeature;
-        $this->apagarAvaliacaoFeature = $apagarAvaliacaoFeature;
+        $this->efetuarLoginFeature = $efetuarLoginFeature;
+        $this->efetuarLogoutFeature = $efetuarLogoutFeature;
+        $this->verUsuarioAutenticadoFeature = $verUsuarioAutenticadoFeature;
 
         // Defino que todas as rotas/métodos deste controller estarão protegidas pelo middleware de autenticação
         // Quaisquer rotas dentro da opção EXCEPT() ficarão FORA da proteção do middleware, ou seja, serão PÚBLICAS
-        $this->middleware('auth:sanctum')->except(['show']);
+        $this->middleware('auth:sanctum')->except(['store']);
+
+    }
+
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request) {
+
+        // Capto dados da requisição
+        $dados = $request->only([      
+            'usuario',
+            'password'
+        ]);
+
+        try {
+
+            // Gero DTO para autenticação de usuário
+            $efetuarLoginDto = EfetuarLoginDTO::fromArray($dados);
+
+            // Executo autenticação
+            $autenticacao = $this->efetuarLoginFeature->execute($efetuarLoginDto);
+
+        } catch (\Exception | \Error $e) {
+              
+            $codigoErro = ValidacaoHelper::validarHttpStatusCode($e->getCode());
+
+            // Retorno Erro
+            return response()->json(array(
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => null
+            ), $codigoErro);
+
+        }
+
+        // Retorno Sucesso
+        return response()->json(array(
+            'success' => true,
+            'message' => 'Autenticado com sucesso',
+            'data' => array(
+                'token' => $autenticacao->token,
+                'token_type' => 'Bearer',
+                'usuario' => $autenticacao->usuario
+            )
+        ), ResponseHttpCode::OK);
 
     }
 
@@ -56,15 +106,14 @@ class AvaliacaoController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param int $codAvaliacao
      * @return \Illuminate\Http\Response
      */
-    public function show($codAvaliacao) {
+    public function show() {
 
         try {
 
-            // Obtenho dados de avaliação especifica
-            $avaliacao = $this->verAvaliacaoFeature->execute($codAvaliacao);
+            // Localizo informações do usuário autenticado
+            $usuarioAutenticado = $this->verUsuarioAutenticadoFeature->execute();
 
         } catch (\Exception | \Error $e) {
               
@@ -84,56 +133,7 @@ class AvaliacaoController extends Controller {
             'success' => true,
             'message' => null,
             'data' => array(
-                'avaliacao' => $avaliacao
-            )
-        ), ResponseHttpCode::OK);
-
-    }
-
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param int $codAvaliacao
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $codAvaliacao) {
-
-        // Capto dados da requisição
-        $dados = $request->only([       
-            'nota',
-            'review'
-        ]); 
-
-        try {
-
-            // Gero DTO para atualização da avaliação
-            $atualizarAvaliacaoDto = AtualizarAvaliacaoDto::fromArray($dados);
-
-            // Atualizo informações da avaliação
-            $avaliacao = $this->atualizarAvaliacaoFeature->execute($codAvaliacao, $atualizarAvaliacaoDto);
-
-        } catch (\Exception | \Error $e) {
-              
-            $codigoErro = ValidacaoHelper::validarHttpStatusCode($e->getCode());
-
-            // Retorno Erro
-            return response()->json(array(
-                'success' => false,
-                'message' => $e->getMessage(),
-                'data' => null
-            ), $codigoErro);
-
-        }
-
-        // Retorno Sucesso
-        return response()->json(array(
-            'success' => true,
-            'message' => 'Avaliação atualizada com sucesso',
-            'data' => array(
-                'avaliacao' => $avaliacao
+                'usuario' => $usuarioAutenticado
             )
         ), ResponseHttpCode::OK);
 
@@ -144,15 +144,14 @@ class AvaliacaoController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $codAvaliacao
      * @return \Illuminate\Http\Response
      */
-    public function destroy($codAvaliacao) {
-        
+    public function destroy() {
+
         try {
 
-            // Apago avaliação especifica
-            $apagar = $this->apagarAvaliacaoFeature->execute($codAvaliacao);
+            // Efetuo logout
+            $logout = $this->efetuarLogoutFeature->execute();
 
         } catch (\Exception | \Error $e) {
               
@@ -170,7 +169,7 @@ class AvaliacaoController extends Controller {
         // Retorno Sucesso
         return response()->json(array(
             'success' => true,
-            'message' => 'Avaliação removida com sucesso',
+            'message' => 'Desconectado com sucesso',
             'data' => null
         ), ResponseHttpCode::OK);
 

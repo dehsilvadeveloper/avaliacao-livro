@@ -21,8 +21,8 @@ class CreateUsuarioTable extends Migration {
                 $table->collation = 'utf8_unicode_ci';
 
                 $table->increments('cod_usuario');
-                $table->string('usuario', 100);
-                $table->text('senha');
+                $table->string('usuario', 100)->unique();
+                $table->text('password');
                 $table->string('email', 100);
                 $table->datetime('email_verified_at')->nullable();
                 $table->rememberToken();

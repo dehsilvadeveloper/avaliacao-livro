@@ -1,12 +1,12 @@
 <?php
-namespace App\BusinessLayer\Actions\Livros;
+namespace App\BusinessLayer\Actions\Usuarios;
 
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importando models
-use App\Models\Livro;
+use App\Models\Usuario;
 
-class PesquisarLivrosAction {
+class LocalizarUsuarioAction {
 
     // Defino variaveis
     private $definition = 'Responsável por executar uma única tarefa';
@@ -38,7 +38,7 @@ class PesquisarLivrosAction {
      */
     public function execute(array $criterio) {
 
-        $query = Livro::query();
+        $query = Usuario::query();
 
         if ($criterio != '' and !is_array($criterio)) {
 
@@ -60,9 +60,9 @@ class PesquisarLivrosAction {
 
         }
 
-        $livros = $query->get();
+        $usuario = $query->first();
 
-        return $livros;
+        return $usuario;
 
     }
 

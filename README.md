@@ -1,5 +1,5 @@
 # API de sistema de avaliação de livros
-> Desenvolvimento com Framework Laravel
+> Desenvolvimento com Framework Laravel 8.0
 
 Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades. O propósito dele é permitir cadastro e gestão de editoras, séries, autores, gêneros, livros e avaliações de livros.
 
@@ -7,7 +7,9 @@ Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades
 
 #### *Requisitos mínimos:*
 - PHP >= 7.4
+- MYSQL >= 5.7
 - Composer
+- Laravel Sanctum >= 2.10
 
 #### *Instalação de dependências:*
 - composer install
@@ -29,8 +31,8 @@ Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades
         * Actions/ => Onde guardamos classes que executam apenas uma tarefa. Pode possuir subpastas de acordo com as entidades que estão sendo trabalhadas.
             * Pasta1/
             * Pasta2/
-        * Features/ => Onde guardamos classes que agrupam actions num determinado propósito.
-        * Validators/ => Onde guardamos classes que fazem validação de dados.
+        * Features/ => Onde guardamos classes que agrupam actions num determinado propósito. Pode possuir subpastas.
+        * Validators/ => Onde guardamos classes que fazem validação de dados. Pode possuir subpastas.
     * DataLayer/
         * DTOs/ => Onde guardamos os data transfer objects, que são usados para organizar e passar os dados entre as camadas do sistema.
     * Http/
@@ -47,7 +49,12 @@ Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades
 
 | URL | Verbo | Nome | Descrição |
 | --- | --- | --- | --- |
-| http://localhost:8000/sistema/api/editoras | GET | editoras.index| Lista de todos as editoras |
+| http://localhost:8000/sistema/api/auth/registrar | POST | auth.registro.store | Cadastra um novo usuário para a API |
+| http://localhost:8000/sistema/api/auth/perfil | GET | auth.show | Visualiza dados do usuário autenticado |
+| http://localhost:8000/sistema/api/auth/login | POST | auth.store | Efetua login na API |
+| http://localhost:8000/sistema/api/auth/logout | POST | auth.destroy | Efetua logout na API |
+| &nbsp; | &nbsp; | &nbsp; |
+| http://localhost:8000/sistema/api/editoras | GET | editoras.index | Lista de todos as editoras |
 | http://localhost:8000/sistema/api/editoras/{editora} | GET | editoras.show | Visualiza dados de um editora específica |
 | http://localhost:8000/sistema/api/editoras | POST | editoras.store | Cadastra uma nova editora |
 | http://localhost:8000/sistema/api/editoras/{editora} | PUT | editoras.update | Atualiza dados de uma editora específica |
@@ -97,9 +104,8 @@ Este é um pequeno sistema desenvolvido apenas para aprimoramento de habilidades
 
 ## TO DO
 
-- Token de autenticação para proteger endpoints
 - Listagem de livros filtrados por editora, gênero, autor e série
 - Upload de imagem para foto da capa do livro
-- Autenticação de usuário
+- Testes com phpUnit
 
 Vamos codar :+1:

@@ -56,6 +56,10 @@ class GeneroController extends Controller {
         $this->verGeneroFeature = $verGeneroFeature;
         $this->apagarGeneroFeature = $apagarGeneroFeature;
 
+        // Defino que todas as rotas/métodos deste controller estarão protegidas pelo middleware de autenticação
+        // Quaisquer rotas dentro da opção EXCEPT() ficarão FORA da proteção do middleware, ou seja, serão PÚBLICAS
+        $this->middleware('auth:sanctum')->except(['index','show']);
+
     }
 
 

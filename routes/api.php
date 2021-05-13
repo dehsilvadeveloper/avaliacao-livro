@@ -13,24 +13,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'auth'], function() {
+
+    Route::post('registrar', 'App\Http\Controllers\Api\RegistroDeUsuarioController@store')->name('auth.registro.store');
+
+    Route::get('perfil', 'App\Http\Controllers\Api\AutenticacaoController@show')->name('auth.show');
+    Route::post('login', 'App\Http\Controllers\Api\AutenticacaoController@store')->name('auth.store');
+    Route::post('logout', 'App\Http\Controllers\Api\AutenticacaoController@destroy')->name('auth.destroy');
+
 });
 
 Route::apiResource('editoras', 'App\Http\Controllers\Api\EditoraController');
-
 //Route::apiResource('editoras.livros', 'App\Http\Controllers\Api\LivroDeEditoraController')->only(['index']);
 
 Route::apiResource('autores', 'App\Http\Controllers\Api\AutorController');
-
 //Route::apiResource('autores.livros', 'App\Http\Controllers\Api\LivroDeAutorController')->only(['index']);
 
 Route::apiResource('generos', 'App\Http\Controllers\Api\GeneroController');
-
 //Route::apiResource('generos.livros', 'App\Http\Controllers\Api\LivroDeGeneroController')->only(['index']);
 
 Route::apiResource('series', 'App\Http\Controllers\Api\SerieController');
-
 //Route::apiResource('series.livros', 'App\Http\Controllers\Api\LivroDeSerieController')->only(['index']);
 
 Route::get('livros/pesquisar', 'App\Http\Controllers\Api\PesquisaLivroController@index')->name('livros.pesquisa.index');
