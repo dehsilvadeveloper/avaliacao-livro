@@ -8,18 +8,18 @@ class CriarAvaliacaoValidator {
 
     // Defino propriedades
     private $sucesso;
-    private $jsonErrosValidacao;
+    private $errosValidacao;
     private $regras = [
-        'cod_usuario' => 'required|integer',
+        'cod_usuario' => 'required||exists:usuario,cod_usuario',
         'nota' => 'required|numeric|min:0|max:5',
         'review' => 'required|string|min:5'
     ];
     private $mensagens = [
         'cod_livro.required' => 'É obrigatório informar o campo LIVRO.',
-        'cod_livro.integer' => 'A identificação do LIVRO deve conter um número inteiro.',
+        'cod_livro.exists' => 'O LIVRO informado não pôde ser localizado. É necessário informar um LIVRO válido.',
         'cod_livro.unique' => 'Já existe uma avaliação deste USUÁRIO para este LIVRO',
         'cod_usuario.required' => 'É obrigatório informar o campo USUÁRIO.',
-        'cod_usuario.integer' => 'A identificação do USUÁRIO deve conter um número inteiro.',
+        'cod_usuario.exists' => 'O USUÁRIO informado não pôde ser localizado. É necessário informar um USUÁRIO válido.',
         'nota.required' => 'É obrigatório informar o campo NOTA.',
         'nota.numeric' => 'O campo NOTA deve conter um número entre 0 e 5.',
         'nota.min' => 'O valor mínimo do campo NOTA é 0.',
@@ -45,8 +45,8 @@ class CriarAvaliacaoValidator {
             return $query->where('cod_usuario', '=', $dados['cod_usuario']);
         });
 
-        // Aplicamos regra especial na coluna 'cod_livro'
-        $this->regras['cod_livro'] = ['required', 'integer', $uniqueRuleParaLivroComUsuario];
+        // Aplicamos regras para coluna 'cod_livro', incluindo a regra especial entre elas
+        $this->regras['cod_livro'] = ['required', 'exists:livro,cod_livro', $uniqueRuleParaLivroComUsuario];
 
         /***************************************
         ::: VERIFICANDO CAMPOS OBRIGATÓRIOS :::
@@ -63,10 +63,8 @@ class CriarAvaliacaoValidator {
             $this->sucesso = false;
 
             // Colocamos as mensagens de erro obtidas em propriedade da classe. 
-            // As mensagens são obtidas no formato array que é modificado para formato json
-            $this->jsonErrosValidacao = json_encode(array(
-                'validacao' => $validacao->errors()->all()
-            ));
+            // As mensagens são obtidas no formato array
+            $this->errosValidacao = $validacao->errors()->all();
 
         } else {
 
@@ -100,12 +98,12 @@ class CriarAvaliacaoValidator {
      * Retorna valor da propriedade JSON ERROS VALIDAÇÃO
      *
      * @access public
-     * @return string
+     * @return array
      * 
      */
-    public function pegarErros() : string {
+    public function pegarErros() : array {
 
-        return $this->jsonErrosValidacao;
+        return $this->errosValidacao;
 
     }
 

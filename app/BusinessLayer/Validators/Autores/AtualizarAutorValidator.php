@@ -7,7 +7,7 @@ class AtualizarAutorValidator {
 
     // Defino propriedades
     private $sucesso;
-    private $jsonErrosValidacao;
+    private $errosValidacao;
     private $regras = [
         'cod_pais' => 'required'
     ];
@@ -47,10 +47,8 @@ class AtualizarAutorValidator {
             $this->sucesso = false;
 
             // Colocamos as mensagens de erro obtidas em propriedade da classe. 
-            // As mensagens são obtidas no formato array que é modificado para formato json
-            $this->jsonErrosValidacao = json_encode(array(
-                'validacao' => $validacao->errors()->all()
-            ));
+            // As mensagens são obtidas no formato array
+            $this->errosValidacao = $validacao->errors()->all();
 
         } else {
 
@@ -84,12 +82,12 @@ class AtualizarAutorValidator {
      * Retorna valor da propriedade JSON ERROS VALIDAÇÃO
      *
      * @access public
-     * @return string
+     * @return array
      * 
      */
-    public function pegarErros() : string {
+    public function pegarErros() : array {
 
-        return $this->jsonErrosValidacao;
+        return $this->errosValidacao;
 
     }
 

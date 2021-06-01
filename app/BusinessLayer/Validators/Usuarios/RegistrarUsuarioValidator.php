@@ -2,15 +2,15 @@
 namespace App\BusinessLayer\Validators\Usuarios;
 
 use Validator;
+use App\Rules\ForcaDaSenhaRule;
 
 class RegistrarUsuarioValidator {
 
     // Defino propriedades
     private $sucesso;
-    private $jsonErrosValidacao;
+    private $errosValidacao;
     private $regras = [
         'usuario' => 'required|unique:usuario,usuario',
-        'password' => 'required|confirmed',
         'email' => 'required'
     ];
     private $mensagens = [
@@ -32,6 +32,9 @@ class RegistrarUsuarioValidator {
      */
     public function execute(array $dados) : void {
 
+        // Adiciono regras para coluna password, incluindo regra customizada
+        $this->regras['password'] = ['required', new ForcaDaSenhaRule(8), 'confirmed'];
+
         /***************************************
         ::: VERIFICANDO CAMPOS OBRIGATÓRIOS :::
         ****************************************/
@@ -47,10 +50,8 @@ class RegistrarUsuarioValidator {
             $this->sucesso = false;
 
             // Colocamos as mensagens de erro obtidas em propriedade da classe. 
-            // As mensagens são obtidas no formato array que é modificado para formato json
-            $this->jsonErrosValidacao = json_encode(array(
-                'validacao' => $validacao->errors()->all()
-            ));
+            // As mensagens são obtidas no formato array
+            $this->errosValidacao = $validacao->errors()->all();
 
         } else {
 
@@ -84,12 +85,12 @@ class RegistrarUsuarioValidator {
      * Retorna valor da propriedade JSON ERROS VALIDAÇÃO
      *
      * @access public
-     * @return string
+     * @return array
      * 
      */
-    public function pegarErros() : string {
+    public function pegarErros() : array {
 
-        return $this->jsonErrosValidacao;
+        return $this->errosValidacao;
 
     }
 

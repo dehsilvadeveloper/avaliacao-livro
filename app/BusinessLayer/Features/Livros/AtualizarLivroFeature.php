@@ -2,6 +2,7 @@
 namespace App\BusinessLayer\Features\Livros;
 
 use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
 use App\DataLayer\DTOs\AtualizarLivroDTO;
@@ -79,9 +80,9 @@ class AtualizarLivroFeature {
         if (!$validador->estaLiberado()) {
 
             // Erro de validação
-            throw new \InvalidArgumentException(
-                $validador->pegarErros(),
-                ResponseHttpCode::DATA_VALIDATION_FAILED
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
             );
 
         }
@@ -95,8 +96,23 @@ class AtualizarLivroFeature {
         // Sincronizo GÊNEROS do livro
         $sincroniaGenerosLivro = $this->sincronizarGenerosDeLivroAction->execute($livro->cod_livro, $dados['generos']);
 
-        // Sincronizo SÉRIES do livro
-        $sincroniaSeriesLivro = $this->sincronizarSeriesDeLivroAction->execute($livro->cod_livro, $dados['series']);
+        // Caso tenham sido informadas SÉRIES para serem vinculadas ao livro
+        if (isset($dados['series']) and $dados['series'] != '') {
+
+            // Faço loop pela lista de séries
+            foreach ($dados['series'] as $s) :
+
+                // Formato array que possibilita inserção das séries e de seus dados de extras de pivot de maneira conjunta
+                $seriesParaSincronizar[$s['cod_serie']] = [
+                    'numero_na_serie' => $s['numero_na_serie']
+                ];
+
+            endforeach;
+
+            // Sincronizo SÉRIES do livro
+            $sincroniaSeriesLivro = $this->sincronizarSeriesDeLivroAction->execute($livro->cod_livro, $seriesParaSincronizar);
+
+        }
 
         // Retorno
         return new LivroResource($livro);

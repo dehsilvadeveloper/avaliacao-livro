@@ -2,6 +2,7 @@
 namespace App\BusinessLayer\Features\Livros;
 
 use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
 use App\DataLayer\DTOs\CriarLivroDTO;
@@ -76,9 +77,9 @@ class CriarLivroFeature {
         if (!$validador->estaLiberado()) {
 
             // Erro de validação
-            throw new \InvalidArgumentException(
-                $validador->pegarErros(),
-                ResponseHttpCode::DATA_VALIDATION_FAILED
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
             );
 
         }
@@ -95,8 +96,18 @@ class CriarLivroFeature {
         // Caso tenham sido informadas SÉRIES para serem vinculadas ao livro
         if (isset($dados['series']) and $dados['series'] != '') {
 
+            // Faço loop pela lista de séries
+            foreach ($dados['series'] as $s) :
+
+                // Formato array que possibilita inserção das séries e de seus dados de extras de pivot de maneira conjunta
+                $seriesParaVincular[$s['cod_serie']] = [
+                    'numero_na_serie' => $s['numero_na_serie']
+                ];
+
+            endforeach;
+
             // Vinculo SÉRIES do livro
-            $vinculoSeriesLivro = $this->vincularSeriesDeLivroAction->execute($livro->cod_livro, $dados['series']);
+            $vinculoSeriesLivro = $this->vincularSeriesDeLivroAction->execute($livro->cod_livro, $seriesParaVincular);
 
         }
 

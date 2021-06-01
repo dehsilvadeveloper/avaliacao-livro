@@ -18,7 +18,7 @@ class AvaliacaoResource extends JsonResource {
             'nota' => (int) $this->nota,
             'review' => $this->review,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
-            'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s'),
+            'atualizado_em' => ($this->updated_at != '') ? $this->updated_at->format('d/m/Y H:i:s') : null,
             // Relações
             'relationships' => [
                 'usuario' => new UsuarioResource($this->usuario),

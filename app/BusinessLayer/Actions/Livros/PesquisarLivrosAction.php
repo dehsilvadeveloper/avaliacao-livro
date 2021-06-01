@@ -58,10 +58,16 @@ class PesquisarLivrosAction {
 
             endforeach;
 
+        } else {
+
+            throw new \Exception('Nenhum critério de pesquisa foi informado', ResponseHttpCode::BAD_REQUEST);
+
         }
 
-        $livros = $query->get();
+        //$livros = $query->get();
+        $livros = $query->paginate();
 
+        //return Livro::filter($filters)->get();
         return $livros;
 
     }

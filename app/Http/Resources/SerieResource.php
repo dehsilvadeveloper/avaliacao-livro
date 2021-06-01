@@ -17,7 +17,7 @@ class SerieResource extends JsonResource {
             'cod_serie' => (int) $this->cod_serie,
             'titulo' => $this->titulo,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
-            'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s'),
+            'atualizado_em' => ($this->updated_at != '') ? $this->updated_at->format('d/m/Y H:i:s') : null,
             // Este trecho só é incluído se esta classe for chamada através do Resource/Collection de "Livro", 
             // indicando colunas adicionais da tabela pivot que liga as entidades "Serie" e "Livro"
             $this->mergeWhen($this->pivot != null, function() {

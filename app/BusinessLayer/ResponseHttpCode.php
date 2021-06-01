@@ -25,7 +25,7 @@ class ResponseHttpCode {
     public const CREATED = 201; // 201 = Created  (para quando o registro for criado com sucesso)
     public const NO_CONTENT = 204; // 204 = No content  (para quando a requisição foi um sucesso, mas nenhum registro foi encontrado)
     public const BAD_REQUEST = 400; // 400 = Bad request
-    public const AUTHENTICATION_FAILED = 401; // 401 = Authentication failed
+    public const AUTHENTICATION_FAILED = 401; // 401 = Authentication failed / Unauthorized
     public const NOT_FOUND = 404; // 404 = Not found
     public const DATA_VALIDATION_FAILED = 422; // 422 = Data validation failed
     public const FAILED_DEPENDENCY = 424; // 424 = Failed dependency

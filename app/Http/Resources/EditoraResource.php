@@ -18,7 +18,7 @@ class EditoraResource extends JsonResource {
             'nome_fantasia' => $this->nome_fantasia,
             'website' => $this->website,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
-            'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s')
+            'atualizado_em' => ($this->updated_at != '') ? $this->updated_at->format('d/m/Y H:i:s') : null
         ];
 
     }

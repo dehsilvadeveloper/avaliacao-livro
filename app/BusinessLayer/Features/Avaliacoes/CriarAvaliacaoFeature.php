@@ -2,6 +2,7 @@
 namespace App\BusinessLayer\Features\Avaliacoes;
 
 use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
 use App\DataLayer\DTOs\CriarAvaliacaoDTO;
@@ -11,6 +12,8 @@ use App\BusinessLayer\Validators\Avaliacoes\CriarAvaliacaoValidator;
 
 // Importo actions
 use App\BusinessLayer\Actions\Avaliacoes\CriarAvaliacaoAction;
+use App\BusinessLayer\Actions\Livros\VerLivroAction;
+use App\BusinessLayer\Actions\Usuarios\VerUsuarioAction;
 
 // Importo resources
 use App\Http\Resources\AvaliacaoResource;
@@ -20,6 +23,8 @@ class CriarAvaliacaoFeature {
     // Defino variaveis
     private $definition = 'Responsável por agrupar e executar uma ou mais ações que serão utilizadas num determinado propósito';
     private $criarAvaliacaoAction;
+    private $verLivroAction;
+    private $verUsuarioAction;
 
     /**
      * 
@@ -27,13 +32,21 @@ class CriarAvaliacaoFeature {
      *
      * @access public
      * @param CriarAvaliacaoAction $criarAvaliacaoAction
+     * @param VerLivroAction $verLivroAction
+     * @param VerUsuarioAction $verUsuarioAction
      * @return void
      * 
      */
-    public function __construct(CriarAvaliacaoAction $criarAvaliacaoAction) {
+    public function __construct(
+        CriarAvaliacaoAction $criarAvaliacaoAction,
+        VerLivroAction $verLivroAction,
+        VerUsuarioAction $verUsuarioAction
+    ) {
 
         // Instancio actions
         $this->criarAvaliacaoAction = $criarAvaliacaoAction;
+        $this->verLivroAction = $verLivroAction;
+        $this->verUsuarioAction = $verUsuarioAction;
 
     }
 
@@ -61,9 +74,9 @@ class CriarAvaliacaoFeature {
         if (!$validador->estaLiberado()) {
 
             // Erro de validação
-            throw new \InvalidArgumentException(
-                $validador->pegarErros(),
-                ResponseHttpCode::DATA_VALIDATION_FAILED
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
             );
 
         }

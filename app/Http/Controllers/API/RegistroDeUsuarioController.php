@@ -37,6 +37,8 @@ class RegistroDeUsuarioController extends Controller {
 
     }
 
+
+    
     /**
      * Store a newly created resource in storage.
      *
@@ -69,6 +71,7 @@ class RegistroDeUsuarioController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
@@ -82,22 +85,6 @@ class RegistroDeUsuarioController extends Controller {
                 'usuario' => $usuario
             )
         ), ResponseHttpCode::OK);
-
-
-
-        /*$request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
-
-        $user = Usuario::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        $token = auth()->login($user);
-        return $this->respondWithToken($token);*/
 
     }
 

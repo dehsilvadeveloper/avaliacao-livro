@@ -30,7 +30,7 @@ class LivroResource extends JsonResource {
             'avaliacao_media' => $this->avaliacoes->avg('nota'),
             'status' => $this->status,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
-            'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s'),
+            'atualizado_em' => ($this->updated_at != '') ? $this->updated_at->format('d/m/Y H:i:s') : null,
             'quanto_tempo_registrado' => $this->quanto_tempo_registrado,
             // Relações
             'relationships' => [

@@ -2,6 +2,7 @@
 namespace App\BusinessLayer\Features\Autenticacoes;
 
 use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
 use App\DataLayer\DTOs\EfetuarLoginDTO;
@@ -61,9 +62,9 @@ class EfetuarLoginFeature {
         if (!$validador->estaLiberado()) {
 
             // Erro de validação
-            throw new \InvalidArgumentException(
-                $validador->pegarErros(),
-                ResponseHttpCode::DATA_VALIDATION_FAILED
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
             );
 
         }

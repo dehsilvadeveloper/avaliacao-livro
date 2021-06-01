@@ -17,7 +17,7 @@ class GeneroResource extends JsonResource {
             'cod_genero' => (int) $this->cod_genero,
             'nome' => $this->nome,
             'criado_em' => $this->created_at->format('d/m/Y H:i:s'),
-            'atualizado_em' => $this->updated_at->format('d/m/Y H:i:s')
+            'atualizado_em' => ($this->updated_at != '') ? $this->updated_at->format('d/m/Y H:i:s') : null
         ];
 
     }

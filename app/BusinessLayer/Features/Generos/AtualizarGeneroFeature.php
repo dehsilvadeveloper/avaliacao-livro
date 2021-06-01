@@ -2,6 +2,7 @@
 namespace App\BusinessLayer\Features\Generos;
 
 use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
 use App\DataLayer\DTOs\AtualizarGeneroDTO;
@@ -62,9 +63,9 @@ class AtualizarGeneroFeature {
         if (!$validador->estaLiberado()) {
 
             // Erro de validação
-            throw new \InvalidArgumentException(
-                $validador->pegarErros(),
-                ResponseHttpCode::DATA_VALIDATION_FAILED
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
             );
 
         }

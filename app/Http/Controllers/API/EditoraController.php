@@ -84,6 +84,7 @@ class EditoraController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
@@ -132,6 +133,7 @@ class EditoraController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
@@ -171,6 +173,7 @@ class EditoraController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
@@ -220,6 +223,7 @@ class EditoraController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
@@ -259,6 +263,7 @@ class EditoraController extends Controller {
             return response()->json(array(
                 'success' => false,
                 'message' => $e->getMessage(),
+                'errors' => method_exists($e, 'getErrors') ? $e->getErrors() : null,
                 'data' => null
             ), $codigoErro);
 
