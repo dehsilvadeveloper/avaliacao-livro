@@ -20,7 +20,7 @@ Para autenticação desta API utilizei Laravel Sanctum 2.11 com validação atra
 - php artisan db:seed
 
 #### *Rodando projeto:*
-- php artisan serve --port=8080
+- php artisan serve --port=8000
 
 ## Estrutura de pastas
 
