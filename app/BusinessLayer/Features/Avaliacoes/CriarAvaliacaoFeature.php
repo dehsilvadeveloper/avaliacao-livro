@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAvaliacaoDTO;
+use App\DataLayer\DTOs\CriarAvaliacaoDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Avaliacoes\CriarAvaliacaoValidator;

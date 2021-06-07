@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarLivroDTO;
+use App\DataLayer\DTOs\AtualizarLivroDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Livros\AtualizarLivroValidator;
@@ -62,19 +62,18 @@ class AtualizarLivroFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codLivro
-     * @param AtualizarLivroDTO $atualizarLivroDto
+     * @param AtualizarLivroDto $atualizarLivroDto
      * @return LivroResource
      * 
      */
-    public function execute(int $codLivro, AtualizarLivroDTO $atualizarLivroDto) : LivroResource {
+    public function execute(AtualizarLivroDto $atualizarLivroDto) : LivroResource {
 
         // Converto objeto para array
         $dados = $atualizarLivroDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarLivroValidator;
-        $validador->execute($codLivro, $dados);
+        $validador->execute($dados['cod_livro'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -88,7 +87,7 @@ class AtualizarLivroFeature {
         }
 
         // Atualizo informações do livro
-        $livro = $this->atualizarLivroAction->execute($codLivro, $atualizarLivroDto);
+        $livro = $this->atualizarLivroAction->execute($atualizarLivroDto);
 
         // Sincronizo AUTORES do livro
         $sincroniaAutoresLivro = $this->sincronizarAutoresDeLivroAction->execute($livro->cod_livro, $dados['autores']);

@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarEditoraDTO;
+use App\DataLayer\DTOs\CriarEditoraDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Editoras\CriarEditoraValidator;
@@ -45,11 +45,11 @@ class CriarEditoraFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarEditoraDTO $criarEditoraDto
+     * @param CriarEditoraDto $criarEditoraDto
      * @return EditoraResource
      * 
      */
-    public function execute(CriarEditoraDTO $criarEditoraDto) : EditoraResource {
+    public function execute(CriarEditoraDto $criarEditoraDto) : EditoraResource {
 
         // Converto objeto para array
         $dados = $criarEditoraDto->toArray();

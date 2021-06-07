@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAvaliacaoDTO;
+use App\DataLayer\DTOs\CriarAvaliacaoDto;
+use App\DataLayer\DTOs\ListarAvaliacoesDeLivroDto;
 
 // Importo features
 use App\BusinessLayer\Features\Avaliacoes\CriarAvaliacaoFeature;
@@ -14,6 +15,7 @@ use App\BusinessLayer\Features\Avaliacoes\ListarAvaliacoesDeLivroFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class AvaliacaoDeLivroController extends Controller {
 
@@ -52,14 +54,31 @@ class AvaliacaoDeLivroController extends Controller {
      * Display a listing of the resource.
      *
      * @param int $codLivro
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index($codLivro) {
+    public function index($codLivro, Request $request) {
+
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]); 
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_livro'] = $codLivro;
+
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de avaliações de livros
+            $listarAvaliacoesDeLivroDto = ListarAvaliacoesDeLivroDto::fromArray($dados);
+
             // Obtenho lista de avaliações de livro
-            $avaliacoes = $this->listarAvaliacoesDeLivroFeature->execute($codLivro);
+            $avaliacoes = $this->listarAvaliacoesDeLivroFeature->execute($listarAvaliacoesDeLivroDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -75,14 +94,15 @@ class AvaliacaoDeLivroController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'avaliacoes' => $avaliacoes
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($avaliacoes);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
         
     }
 
@@ -133,9 +153,7 @@ class AvaliacaoDeLivroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Avaliação criada com sucesso',
-            'data' => array(
-                'avaliacao' => $avaliacao
-            )
+            'data' => $avaliacao
         ), ResponseHttpCode::OK);
 
     }

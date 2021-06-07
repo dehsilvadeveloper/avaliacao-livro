@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Series;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarSerieDTO;
+use App\DataLayer\DTOs\CriarSerieDto;
 
 // Importando models
 use App\Models\Serie;
@@ -35,14 +35,14 @@ class CriarSerieAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarSerieDTO $criarSerieDTO
+     * @param CriarSerieDto $criarSerieDto
      * @return object
      * 
      */
-    public function execute(CriarSerieDTO $criarSerieDTO) : object {
+    public function execute(CriarSerieDto $criarSerieDto) : object {
 
         // Converto objeto para array
-        $dados = $criarSerieDTO->toArray();
+        $dados = $criarSerieDto->toArray();
 
         // Inserção do registro
         $serie = Serie::create($dados);

@@ -1,7 +1,12 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class AtualizarEditoraDTO {
+class AtualizarEditoraDto {
+
+    /**
+     * @var int
+     */
+    private $codEditora;
 
     /**
      * @var string
@@ -23,6 +28,7 @@ class AtualizarEditoraDTO {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
+        $self->codEditora = $dados['cod_editora'];
         $self->nomeFantasia = $dados['nome_fantasia'];
         $self->website = $dados['website'];
 
@@ -41,6 +47,7 @@ class AtualizarEditoraDTO {
     public function toArray() : array {
 
         return [
+            'cod_editora' => $this->codEditora,
             'nome_fantasia' => $this->nomeFantasia,
             'website' => $this->website
         ];

@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\EfetuarLoginDTO;
+use App\DataLayer\DTOs\EfetuarLoginDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Autenticacoes\EfetuarLoginValidator;
@@ -45,11 +45,11 @@ class EfetuarLoginFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param EfetuarLoginDTO $efetuarLoginDto
+     * @param EfetuarLoginDto $efetuarLoginDto
      * @return object
      * 
      */
-    public function execute(EfetuarLoginDTO $efetuarLoginDto) : object {
+    public function execute(EfetuarLoginDto $efetuarLoginDto) : object {
 
         // Converto objeto para array
         $dados = $efetuarLoginDto->toArray();

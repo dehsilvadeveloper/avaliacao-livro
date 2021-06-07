@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarLivroDTO;
+use App\DataLayer\DTOs\CriarLivroDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Livros\CriarLivroValidator;
@@ -61,10 +61,10 @@ class CriarLivroFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarLivroDTO $criarLivroDto
+     * @param CriarLivroDto $criarLivroDto
      * @return LivroResource
      */
-    public function execute(CriarLivroDTO $criarLivroDto) : LivroResource {
+    public function execute(CriarLivroDto $criarLivroDto) : LivroResource {
 
         // Converto objeto para array
         $dados = $criarLivroDto->toArray();

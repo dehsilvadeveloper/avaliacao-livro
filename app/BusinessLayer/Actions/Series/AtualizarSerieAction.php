@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Series;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarSerieDTO;
+use App\DataLayer\DTOs\AtualizarSerieDto;
 
 // Importando models
 use App\Models\Serie;
@@ -35,24 +35,26 @@ class AtualizarSerieAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codSerie
-     * @param AtualizarSerieDTO $atualizarSerieDTO
+     * @param AtualizarSerieDto $atualizarSerieDto
      * @return object
      * 
      */
-    public function execute(int $codSerie, AtualizarSerieDTO $atualizarSerieDTO) : object {
+    public function execute(AtualizarSerieDto $atualizarSerieDto) : object {
 
         // Converto objeto para array
-        $dados = $atualizarSerieDTO->toArray();
+        $dados = $atualizarSerieDto->toArray();
 
         // Localizo série
-        $serie = Serie::find($codSerie);
+        $serie = Serie::find($dados['cod_serie']);
 
         if (!$serie) {
 
             throw new \Exception('Série não localizada', ResponseHttpCode::NOT_FOUND);
 
         }
+
+        // Não precisamos mais do código, então o removemos
+        unset($dados['cod_serie']);
 
         // Atualizo dados
         $serie->update($dados);

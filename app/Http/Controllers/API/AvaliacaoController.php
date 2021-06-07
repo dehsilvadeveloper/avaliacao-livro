@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarAvaliacaoDTO;
+use App\DataLayer\DTOs\AtualizarAvaliacaoDto;
 
 // Importo features
 use App\BusinessLayer\Features\Avaliacoes\AtualizarAvaliacaoFeature;
@@ -84,9 +84,7 @@ class AvaliacaoController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'avaliacao' => $avaliacao
-            )
+            'data' => $avaliacao
         ), ResponseHttpCode::OK);
 
     }
@@ -110,11 +108,14 @@ class AvaliacaoController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_avaliacao'] = $codAvaliacao;
+
             // Gero DTO para atualização da avaliação
             $atualizarAvaliacaoDto = AtualizarAvaliacaoDto::fromArray($dados);
 
             // Atualizo informações da avaliação
-            $avaliacao = $this->atualizarAvaliacaoFeature->execute($codAvaliacao, $atualizarAvaliacaoDto);
+            $avaliacao = $this->atualizarAvaliacaoFeature->execute($atualizarAvaliacaoDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -134,9 +135,7 @@ class AvaliacaoController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Avaliação atualizada com sucesso',
-            'data' => array(
-                'avaliacao' => $avaliacao
-            )
+            'data' => $avaliacao
         ), ResponseHttpCode::OK);
 
     }

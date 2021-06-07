@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarGeneroDTO;
+use App\DataLayer\DTOs\CriarGeneroDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Generos\CriarGeneroValidator;
@@ -45,11 +45,11 @@ class CriarGeneroFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarGeneroDTO $criarGeneroDto
+     * @param CriarGeneroDto $criarGeneroDto
      * @return GeneroResource
      * 
      */
-    public function execute(CriarGeneroDTO $criarGeneroDto) : GeneroResource {
+    public function execute(CriarGeneroDto $criarGeneroDto) : GeneroResource {
 
         // Converto objeto para array
         $dados = $criarGeneroDto->toArray();

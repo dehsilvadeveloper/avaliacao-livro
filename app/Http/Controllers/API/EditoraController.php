@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarEditoraDTO;
-use App\DataLayer\DTOs\AtualizarEditoraDTO;
+use App\DataLayer\DTOs\CriarEditoraDto;
+use App\DataLayer\DTOs\AtualizarEditoraDto;
+use App\DataLayer\DTOs\ListarEditorasDto;
 
 // Importo features
 use App\BusinessLayer\Features\Editoras\CriarEditoraFeature;
@@ -18,6 +19,7 @@ use App\BusinessLayer\Features\Editoras\ApagarEditoraFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class EditoraController extends Controller {
 
@@ -67,14 +69,28 @@ class EditoraController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) {
+
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]); 
 
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de editoras
+            $listarEditorasDto = ListarEditorasDto::fromArray($dados);
+
             // Obtenho lista de editoras
-            $editoras = $this->listarEditorasFeature->execute();
+            $editoras = $this->listarEditorasFeature->execute($listarEditorasDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -90,14 +106,15 @@ class EditoraController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'editoras' => $editoras
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($editoras);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
         
     }
 
@@ -143,9 +160,7 @@ class EditoraController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Editora criada com sucesso',
-            'data' => array(
-                'editora' => $editora
-            )
+            'data' => $editora
         ), ResponseHttpCode::OK);
 
     }
@@ -183,9 +198,7 @@ class EditoraController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'editora' => $editora
-            )
+            'data' => $editora
         ), ResponseHttpCode::OK);
 
     }
@@ -209,11 +222,14 @@ class EditoraController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_editora'] = $codEditora;
+
             // Gero DTO para atualização da editora
             $atualizarEditoraDto = AtualizarEditoraDto::fromArray($dados);
 
             // Atualizo informações da editora
-            $editora = $this->atualizarEditoraFeature->execute($codEditora, $atualizarEditoraDto);
+            $editora = $this->atualizarEditoraFeature->execute($atualizarEditoraDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -233,9 +249,7 @@ class EditoraController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Editora atualizada com sucesso',
-            'data' => array(
-                'editora' => $editora
-            )
+            'data' => $editora
         ), ResponseHttpCode::OK);
 
     }

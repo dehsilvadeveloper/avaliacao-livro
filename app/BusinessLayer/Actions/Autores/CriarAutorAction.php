@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Autores;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAutorDTO;
+use App\DataLayer\DTOs\CriarAutorDto;
 
 // Importando models
 use App\Models\Autor;
@@ -35,14 +35,14 @@ class CriarAutorAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarAutorDTO $criarAutorDTO
+     * @param CriarAutorDto $criarAutorDto
      * @return object
      * 
      */
-    public function execute(CriarAutorDTO $criarAutorDTO) : object {
+    public function execute(CriarAutorDto $criarAutorDto) : object {
 
         // Converto objeto para array
-        $dados = $criarAutorDTO->toArray();
+        $dados = $criarAutorDto->toArray();
 
         // Inserção do registro
         $autor = Autor::create($dados);

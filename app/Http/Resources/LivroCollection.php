@@ -13,19 +13,14 @@ class LivroCollection extends ResourceCollection {
      */
     public function toArray($request) {
 
-        /*
         // Podemos colocar o resultado num nível mais abaixo, dentro de um novo array que é retornado
-        return [
-            'livros' => $this->collection->map(function ($livro) use ($request) {
+        /*return [
+            'data' => $this->collection->map(function ($livro) use ($request) {
                 return (new LivroResource($livro))->toArray($request);
             })
-        ];
-        */
+        ];*/
 
-        // Percorremos todos os itens e aplicamos o resource adequado a eles, agrupando-os nesse array de saída
-        return $this->collection->map(function ($livro) use ($request) {
-            return (new LivroResource($livro))->toArray($request);
-        });
+        return parent::toArray($request);
 
     }
 

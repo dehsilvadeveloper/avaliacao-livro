@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Autores;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarAutorDTO;
+use App\DataLayer\DTOs\AtualizarAutorDto;
 
 // Importando models
 use App\Models\Autor;
@@ -35,24 +35,26 @@ class AtualizarAutorAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codAutor
-     * @param AtualizarAutorDTO $atualizarAutorDTO
+     * @param AtualizarAutorDto $atualizarAutorDto
      * @return object
      * 
      */
-    public function execute(int $codAutor, AtualizarAutorDTO $atualizarAutorDTO) : object {
+    public function execute(AtualizarAutorDto $atualizarAutorDto) : object {
 
         // Converto objeto para array
-        $dados = $atualizarAutorDTO->toArray();
+        $dados = $atualizarAutorDto->toArray();
 
         // Localizo autor
-        $autor = Autor::find($codAutor);
+        $autor = Autor::find($dados['cod_autor']);
 
         if (!$autor) {
 
             throw new \Exception('Autor não localizado', ResponseHttpCode::NOT_FOUND);
 
         }
+
+        // Não precisamos mais do código, então o removemos
+        unset($dados['cod_autor']);
 
         // Atualizo dados
         $autor->update($dados);

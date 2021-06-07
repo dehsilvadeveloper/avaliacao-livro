@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\EfetuarLoginDTO;
+use App\DataLayer\DTOs\EfetuarLoginDto;
 
 // Importo features
 use App\BusinessLayer\Features\Autenticacoes\EfetuarLoginFeature;
@@ -70,7 +70,7 @@ class AutenticacaoController extends Controller {
         try {
 
             // Gero DTO para autenticação de usuário
-            $efetuarLoginDto = EfetuarLoginDTO::fromArray($dados);
+            $efetuarLoginDto = EfetuarLoginDto::fromArray($dados);
 
             // Executo autenticação
             $autenticacao = $this->efetuarLoginFeature->execute($efetuarLoginDto);
@@ -134,9 +134,7 @@ class AutenticacaoController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'usuario' => $usuarioAutenticado
-            )
+            'data' => $usuarioAutenticado
         ), ResponseHttpCode::OK);
 
     }

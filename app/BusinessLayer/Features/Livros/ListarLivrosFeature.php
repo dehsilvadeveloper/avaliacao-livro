@@ -1,6 +1,15 @@
 <?php
 namespace App\BusinessLayer\Features\Livros;
 
+use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
+
+// Importo DTOs
+use App\DataLayer\DTOs\ListarLivrosDto;
+
+// Importo validators
+use App\BusinessLayer\Validators\Livros\ListarLivrosValidator;
+
 // Importo actions
 use App\BusinessLayer\Actions\Livros\ListarLivrosAction;
 
@@ -36,16 +45,37 @@ class ListarLivrosFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @return LivroCollection
+     * @param ListarLivrosDto $listarLivrosDto
+     * @return array
      * 
      */
-    public function execute() : LivroCollection {
+    public function execute(ListarLivrosDto $listarLivrosDto) : array {
+
+        // Converto objeto para array
+        $dados = $listarLivrosDto->toArray();
+
+        // Validação de dados obrigatórios
+        $validador = new ListarLivrosValidator;
+        $validador->execute($dados);
+
+        // Caso os dados NÃO SEJAM válidos
+        if (!$validador->estaLiberado()) {
+
+            // Erro de validação
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
+            );
+
+        }
 
         // Obtenho lista de livros
-        $livros = $this->ListarLivrosAction->execute();
+        $livros = $this->ListarLivrosAction->execute($listarLivrosDto);
 
         // Retorno
-        return new LivroCollection($livros);
+        // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 
+        // Para incluir informações da paginação na resposta usamos getData() junto da collection.
+        return (new LivroCollection($livros))->response()->getData(true);
 
     }
 

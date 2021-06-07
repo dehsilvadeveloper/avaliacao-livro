@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarEditoraDTO;
+use App\DataLayer\DTOs\AtualizarEditoraDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Editoras\AtualizarEditoraValidator;
@@ -45,19 +45,18 @@ class AtualizarEditoraFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codEditora
-     * @param AtualizarEditoraDTO $atualizarEditoraDto
+     * @param AtualizarEditoraDto $atualizarEditoraDto
      * @return EditoraResource
      * 
      */
-    public function execute(int $codEditora, AtualizarEditoraDTO $atualizarEditoraDto) : EditoraResource {
+    public function execute(AtualizarEditoraDto $atualizarEditoraDto) : EditoraResource {
 
         // Converto objeto para array
         $dados = $atualizarEditoraDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarEditoraValidator;
-        $validador->execute($codEditora, $dados);
+        $validador->execute($dados['cod_editora'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -71,7 +70,7 @@ class AtualizarEditoraFeature {
         }
 
         // Atualizo informações da editora
-        $editora = $this->atualizarEditoraAction->execute($codEditora, $atualizarEditoraDto);
+        $editora = $this->atualizarEditoraAction->execute($atualizarEditoraDto);
 
         // Retorno
         return new EditoraResource($editora);

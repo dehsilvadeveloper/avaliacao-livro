@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Livros;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarLivroDTO;
+use App\DataLayer\DTOs\AtualizarLivroDto;
 
 // Importando models
 use App\Models\Livro;
@@ -35,24 +35,26 @@ class AtualizarLivroAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codLivro
-     * @param AtualizarLivroDTO $atualizarLivroDTO
+     * @param AtualizarLivroDto $atualizarLivroDto
      * @return object
      * 
      */
-    public function execute(int $codLivro, AtualizarLivroDTO $atualizarLivroDTO) : object {
+    public function execute(AtualizarLivroDto $atualizarLivroDto) : object {
 
         // Converto objeto para array
-        $dados = $atualizarLivroDTO->toArray();
+        $dados = $atualizarLivroDto->toArray();
 
         // Localizo livro
-        $livro = Livro::find($codLivro);
+        $livro = Livro::find($dados['cod_livro']);
 
         if (!$livro) {
 
             throw new \Exception('Livro não localizado', ResponseHttpCode::NOT_FOUND);
 
         }
+
+        // Não precisamos mais do código, então o removemos
+        unset($dados['cod_livro']);
 
         // Atualizo dados
         $livro->update($dados);

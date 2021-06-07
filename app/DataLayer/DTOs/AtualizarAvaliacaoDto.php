@@ -1,7 +1,12 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class AtualizarAvaliacaoDTO {
+class AtualizarAvaliacaoDto {
+
+    /**
+     * @var int
+     */
+    private $codAvaliacao;
 
     /**
      * @var int
@@ -23,6 +28,7 @@ class AtualizarAvaliacaoDTO {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
+        $self->codAvaliacao = $dados['cod_avaliacao'];
         $self->nota = $dados['nota'];
         $self->review = $dados['review'];
 
@@ -41,6 +47,7 @@ class AtualizarAvaliacaoDTO {
     public function toArray() : array {
 
         return [
+            'cod_avaliacao' => $this->codAvaliacao,
             'nota' => $this->nota,
             'review' => $this->review
         ];

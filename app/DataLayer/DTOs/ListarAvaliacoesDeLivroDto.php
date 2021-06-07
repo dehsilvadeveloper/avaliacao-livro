@@ -1,12 +1,7 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class CriarAvaliacaoDto {
-
-    /**
-     * @var int
-     */
-    private $codUsuario;
+class ListarAvaliacoesDeLivroDto {
 
     /**
      * @var int
@@ -16,12 +11,21 @@ class CriarAvaliacaoDto {
     /**
      * @var int
      */
-    private $nota;
+    private $page;
 
     /**
-     * @var string
+     * @var int
      */
-    private $review;
+    private $pageSize;
+
+    /**
+     * @var array - vetor com dados para ordenação
+     * @sample array(
+     *      "titulo" => "asc",
+     *      "idioma" => "desc"
+     * )
+     */
+    private $sort;
 
     /**
      * Dinamicamente preenche propriedades do objeto a partir de um array
@@ -33,10 +37,10 @@ class CriarAvaliacaoDto {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
-        $self->codUsuario = $dados['cod_usuario'];
         $self->codLivro = $dados['cod_livro'];
-        $self->nota = $dados['nota'];
-        $self->review = $dados['review'];
+        $self->page = $dados['page'];
+        $self->pageSize = $dados['page_size'];
+        $self->sort = $dados['sort'];
 
         return $self;
 
@@ -53,10 +57,10 @@ class CriarAvaliacaoDto {
     public function toArray() : array {
 
         return [
-            'cod_usuario' => $this->codUsuario,
             'cod_livro' => $this->codLivro,
-            'nota' => $this->nota,
-            'review' => $this->review
+            'page' => $this->page,
+            'page_size' => $this->pageSize,
+            'sort' => $this->sort
         ];
 
     }

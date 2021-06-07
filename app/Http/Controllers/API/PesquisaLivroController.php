@@ -5,11 +5,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
+// Importo DTOs
+use App\DataLayer\Dtos\PesquisarLivrosDto;
+
 // Importo features
 use App\BusinessLayer\Features\Livros\PesquisarLivrosFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class PesquisaLivroController extends Controller {
 
@@ -45,7 +49,10 @@ class PesquisaLivroController extends Controller {
     public function index(Request $request) {
 
         // Capto dados da requisição
-        $dadosParaCriterio = $request->only([     
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort',
             'cod_editora',  
             'titulo',
             'titulo_original',
@@ -61,8 +68,14 @@ class PesquisaLivroController extends Controller {
  
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para pesquisa de livros
+            $pesquisarLivrosDto = PesquisarLivrosDto::fromArray($dados);
+
             // Pesquisa por livros utilizando critério informado
-            $livros = $this->pesquisarLivrosFeature->execute($dadosParaCriterio);
+            $livros = $this->pesquisarLivrosFeature->execute($pesquisarLivrosDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -78,14 +91,15 @@ class PesquisaLivroController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'livros' => $livros
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($livros);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
 
     }
 

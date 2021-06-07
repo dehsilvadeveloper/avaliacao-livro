@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarSerieDTO;
+use App\DataLayer\DTOs\CriarSerieDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Series\CriarSerieValidator;
@@ -45,11 +45,11 @@ class CriarSerieFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarSerieDTO $criarSerieDto
+     * @param CriarSerieDto $criarSerieDto
      * @return SerieResource
      * 
      */
-    public function execute(CriarSerieDTO $criarSerieDto) : SerieResource {
+    public function execute(CriarSerieDto $criarSerieDto) : SerieResource {
 
         // Converto objeto para array
         $dados = $criarSerieDto->toArray();

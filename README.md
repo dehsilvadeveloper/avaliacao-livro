@@ -8,8 +8,8 @@ Para autenticação desta API utilizei Laravel Sanctum 2.11 com validação atra
 ## Inicialização
 
 #### *Requisitos mínimos:*
-- PHP >= 7.4
-- MYSQL >= 5.7
+- PHP 7.4
+- MYSQL 5.7
 - Composer
 
 #### *Instalação de dependências:*

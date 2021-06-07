@@ -65,10 +65,19 @@ class PesquisarLivrosAction {
         }
 
         //$livros = $query->get();
-        $livros = $query->paginate();
+        $livros = $query->paginate(2);
 
-        //return Livro::filter($filters)->get();
         return $livros;
+
+        /*
+        $livros = Livro::with(['autores', 'generos', 'series'])
+                       ->withCount('avaliacoes')
+                       ->filter($filters) // scope
+                       ->paginate(2);
+
+        return $livros;
+        return LivroSearch::apply($filters); // ou ::apply($dados)
+        */
 
     }
 

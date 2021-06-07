@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Editoras;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarEditoraDTO;
+use App\DataLayer\DTOs\AtualizarEditoraDto;
 
 // Importando models
 use App\Models\Editora;
@@ -35,24 +35,26 @@ class AtualizarEditoraAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codEditora
-     * @param AtualizarEditoraDTO $atualizarEditoraDTO
+     * @param AtualizarEditoraDto $atualizarEditoraDto
      * @return object
      * 
      */
-    public function execute(int $codEditora, AtualizarEditoraDTO $atualizarEditoraDTO) : object {
+    public function execute(AtualizarEditoraDto $atualizarEditoraDto) : object {
 
         // Converto objeto para array
-        $dados = $atualizarEditoraDTO->toArray();
+        $dados = $atualizarEditoraDto->toArray();
 
         // Localizo editora
-        $editora = Editora::find($codEditora);
+        $editora = Editora::find($dados['cod_editora']);
 
         if (!$editora) {
 
             throw new \Exception('Editora não localizada', ResponseHttpCode::NOT_FOUND);
 
         }
+
+        // Não precisamos mais do código, então o removemos
+        unset($dados['cod_editora']);
 
         // Atualizo dados
         $editora->update($dados);

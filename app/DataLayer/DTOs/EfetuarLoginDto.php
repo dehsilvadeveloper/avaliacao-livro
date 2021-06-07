@@ -1,7 +1,7 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class EfetuarLoginDTO {
+class EfetuarLoginDto {
 
     /**
      * @var string

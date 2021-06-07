@@ -1,7 +1,7 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class CriarLivroDto {
+class PesquisarLivrosDto {
 
     /**
      * @var string
@@ -101,9 +101,9 @@ class CriarLivroDto {
         $self->tipoCapa = $dados['tipo_capa'];
         $self->fotoCapa = $dados['foto_capa'];
         $self->codEditora = $dados['cod_editora'];
-        $self->autores = $dados['autores'];
-        $self->generos = $dados['generos'];
-        $self->series = $dados['series'];
+        /*$self->autores = json_decode($dados['autores'], true);
+        $self->generos = json_decode($dados['generos'], true);
+        $self->series = json_decode($dados['series'], true);*/
 
         return $self;
 
@@ -131,9 +131,9 @@ class CriarLivroDto {
             'tipo_capa' => $this->tipoCapa,
             'foto_capa' => $this->fotoCapa,
             'cod_editora' => $this->codEditora,
-            'autores' => $this->autores,
+            /*'autores' => $this->autores,
             'generos' => $this->generos,
-            'series' => $this->series
+            'series' => $this->series*/
         ];
 
     }

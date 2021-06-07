@@ -1,7 +1,12 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class AtualizarSerieDTO {
+class AtualizarSerieDto {
+
+    /**
+     * @var int
+     */
+    private $codSerie;
 
     /**
      * @var string
@@ -18,6 +23,7 @@ class AtualizarSerieDTO {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
+        $self->codSerie = $dados['cod_serie'];
         $self->titulo = $dados['titulo'];
 
         return $self;
@@ -35,6 +41,7 @@ class AtualizarSerieDTO {
     public function toArray() : array {
 
         return [
+            'cod_serie' => $this->codSerie,
             'titulo' => $this->titulo
         ];
 

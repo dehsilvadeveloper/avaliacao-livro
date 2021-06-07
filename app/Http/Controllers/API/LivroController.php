@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarLivroDTO;
-use App\DataLayer\DTOs\AtualizarLivroDTO;
+use App\DataLayer\DTOs\CriarLivroDto;
+use App\DataLayer\DTOs\AtualizarLivroDto;
+use App\DataLayer\DTOs\ListarLivrosDto;
 
 // Importo features
 use App\BusinessLayer\Features\Livros\CriarLivroFeature;
@@ -18,6 +19,7 @@ use App\BusinessLayer\Features\Livros\ApagarLivroFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class LivroController extends Controller {
 
@@ -67,14 +69,28 @@ class LivroController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
- 
+    public function index(Request $request) {
+
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]); 
+
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de livros
+            $listarLivrosDto = ListarLivrosDto::fromArray($dados);
+
             // Obtenho lista de livros
-            $livros = $this->listarLivrosFeature->execute();
+            $livros = $this->listarLivrosFeature->execute($listarLivrosDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -90,14 +106,15 @@ class LivroController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'livros' => $livros
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($livros);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
 
     }
 
@@ -131,6 +148,11 @@ class LivroController extends Controller {
 
         try {
 
+            // Convertemos de JSON para array associativo
+            $dados['autores'] = json_decode($dados['autores'], true);
+            $dados['generos'] = json_decode($dados['generos'], true);
+            $dados['series'] = json_decode($dados['series'], true);
+
             // Gero DTO para criação do livro
             $criarLivroDto = CriarLivroDto::fromArray($dados);
 
@@ -155,9 +177,7 @@ class LivroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Livro criado com sucesso',
-            'data' => array(
-                'livro' => $livro
-            )
+            'data' => $livro
         ), ResponseHttpCode::OK);
 
     }
@@ -195,9 +215,7 @@ class LivroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'livro' => $livro
-            )
+            'data' => $livro
         ), ResponseHttpCode::OK);
 
     }
@@ -232,11 +250,19 @@ class LivroController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_livro'] = $codLivro;
+
+            // Convertemos de JSON para array associativo
+            $dados['autores'] = json_decode($dados['autores'], true);
+            $dados['generos'] = json_decode($dados['generos'], true);
+            $dados['series'] = json_decode($dados['series'], true);
+
             // Gero DTO para atualização do livro
             $atualizarLivroDto = AtualizarLivroDto::fromArray($dados);
 
             // Atualizo informações do livro
-            $livro = $this->atualizarLivroFeature->execute($codLivro, $atualizarLivroDto);
+            $livro = $this->atualizarLivroFeature->execute($atualizarLivroDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -256,9 +282,7 @@ class LivroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Livro atualizado com sucesso',
-            'data' => array(
-                'livro' => $livro
-            )
+            'data' => $livro
         ), ResponseHttpCode::OK);
 
     }

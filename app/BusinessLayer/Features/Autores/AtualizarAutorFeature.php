@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarAutorDTO;
+use App\DataLayer\DTOs\AtualizarAutorDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Autores\AtualizarAutorValidator;
@@ -45,19 +45,18 @@ class AtualizarAutorFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codAutor
-     * @param AtualizarAutorDTO $atualizarAutorDto
+     * @param AtualizarAutorDto $atualizarAutorDto
      * @return AutorResource
      * 
      */
-    public function execute(int $codAutor, AtualizarAutorDTO $atualizarAutorDto) : AutorResource {
+    public function execute(AtualizarAutorDto $atualizarAutorDto) : AutorResource {
 
         // Converto objeto para array
         $dados = $atualizarAutorDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarAutorValidator;
-        $validador->execute($codAutor, $dados);
+        $validador->execute($dados['cod_autor'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -71,7 +70,7 @@ class AtualizarAutorFeature {
         }
 
         // Atualizo informações do autor
-        $autor = $this->atualizarAutorAction->execute($codAutor, $atualizarAutorDto);
+        $autor = $this->atualizarAutorAction->execute($atualizarAutorDto);
 
         // Retorno
         return new AutorResource($autor);

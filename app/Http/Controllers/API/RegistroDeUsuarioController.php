@@ -81,9 +81,7 @@ class RegistroDeUsuarioController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Usuário criado com sucesso',
-            'data' => array(
-                'usuario' => $usuario
-            )
+            'data' => $usuario
         ), ResponseHttpCode::OK);
 
     }

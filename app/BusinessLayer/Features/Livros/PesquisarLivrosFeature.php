@@ -49,15 +49,15 @@ class PesquisarLivrosFeature {
      *
      * @access public
      * @param PesquisarLivrosDto $pesquisarLivrosDto
-     * @return LivroCollection
+     * @return array
      * 
      */
-    public function execute(PesquisarLivrosDto $pesquisarLivrosDto) : LivroCollection {
+    public function execute(PesquisarLivrosDto $pesquisarLivrosDto) : array {
 
         // Converto objeto para array
         $dados = $pesquisarLivrosDto->toArray();
 
-        // Validação de dados obrigatórios
+        /*// Validação de dados obrigatórios
         $validador = new PesquisarLivrosValidator;
         $validador->execute($dados);
 
@@ -70,15 +70,19 @@ class PesquisarLivrosFeature {
                 $validador->pegarErros()
             );
 
-        }
+        }*/
 
         $criterio = array();
 
-        if (Arr::has($dados, 'titulo')) {
+        if ($dados['titulo'] != '') {
             array_push($criterio, array('titulo', 'LIKE', '%' . $dados['titulo'] . '%'));
         }
 
-        if (Arr::has($dados, 'idioma')) {
+        if ($dados['titulo_original'] != '') {
+            array_push($criterio, array('titulo_original', 'LIKE', '%' . $dados['titulo_original'] . '%'));
+        }
+
+        if ($dados['idioma'] != '') {
             array_push($criterio, array('idioma', '=', $dados['idioma']));
         }
 
@@ -92,7 +96,9 @@ class PesquisarLivrosFeature {
         $livros = $this->PesquisarLivrosAction->execute($criterio);
 
         // Retorno
-        return new LivroCollection($livros);
+        // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 
+        // Para incluir informações da paginação na resposta usamos getData() junto da collection.
+        return (new LivroCollection($livros))->response()->getData(true);
 
     }
 

@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarSerieDTO;
+use App\DataLayer\DTOs\AtualizarSerieDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Series\AtualizarSerieValidator;
@@ -45,19 +45,18 @@ class AtualizarSerieFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codSerie
-     * @param AtualizarSerieDTO $atualizarSerieDto
+     * @param AtualizarSerieDto $atualizarSerieDto
      * @return SerieResource
      * 
      */
-    public function execute(int $codSerie, AtualizarSerieDTO $atualizarSerieDto) : SerieResource {
+    public function execute(AtualizarSerieDto $atualizarSerieDto) : SerieResource {
 
         // Converto objeto para array
         $dados = $atualizarSerieDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarSerieValidator;
-        $validador->execute($codSerie, $dados);
+        $validador->execute($dados['cod_serie'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -71,7 +70,7 @@ class AtualizarSerieFeature {
         }
 
         // Atualizo informações da série
-        $serie = $this->atualizarSerieAction->execute($codSerie, $atualizarSerieDto);
+        $serie = $this->atualizarSerieAction->execute($atualizarSerieDto);
 
         // Retorno
         return new SerieResource($serie);

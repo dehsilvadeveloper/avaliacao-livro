@@ -1,6 +1,15 @@
 <?php
 namespace App\BusinessLayer\Features\Autores;
 
+use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
+
+// Importo DTOs
+use App\DataLayer\DTOs\ListarAutoresDto;
+
+// Importo validators
+use App\BusinessLayer\Validators\Autores\ListarAutoresValidator;
+
 // Importo actions
 use App\BusinessLayer\Actions\Autores\ListarAutoresAction;
 
@@ -36,16 +45,37 @@ class ListarAutoresFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @return AutorCollection
+     * @param ListarAutoresDto $listarAutoresDto
+     * @return array
      * 
      */
-    public function execute() : AutorCollection {
+    public function execute(ListarAutoresDto $listarAutoresDto) : array {
+
+        // Converto objeto para array
+        $dados = $listarAutoresDto->toArray();
+
+        // Validação de dados obrigatórios
+        $validador = new ListarAutoresValidator;
+        $validador->execute($dados);
+
+        // Caso os dados NÃO SEJAM válidos
+        if (!$validador->estaLiberado()) {
+
+            // Erro de validação
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
+            );
+
+        }
 
         // Obtenho lista de autores
-        $autores = $this->listarAutoresAction->execute();
+        $autores = $this->listarAutoresAction->execute($listarAutoresDto);
 
         // Retorno
-        return new AutorCollection($autores);
+        // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 
+        // Para incluir informações da paginação na resposta usamos getData() junto da collection.
+        return (new AutorCollection($autores))->response()->getData(true);
 
     }
 

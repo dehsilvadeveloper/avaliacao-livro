@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Editoras;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarEditoraDTO;
+use App\DataLayer\DTOs\CriarEditoraDto;
 
 // Importando models
 use App\Models\Editora;
@@ -35,14 +35,14 @@ class CriarEditoraAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarEditoraDTO $criarEditoraDTO
+     * @param CriarEditoraDto $criarEditoraDto
      * @return object
      * 
      */
-    public function execute(CriarEditoraDTO $criarEditoraDTO) : object {
+    public function execute(CriarEditoraDto $criarEditoraDto) : object {
 
         // Converto objeto para array
-        $dados = $criarEditoraDTO->toArray();
+        $dados = $criarEditoraDto->toArray();
 
         // Inserção do registro
         $editora = Editora::create($dados);

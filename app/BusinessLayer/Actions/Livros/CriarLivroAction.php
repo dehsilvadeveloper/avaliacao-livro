@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Livros;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarLivroDTO;
+use App\DataLayer\DTOs\CriarLivroDto;
 
 // Importando models
 use App\Models\Livro;
@@ -35,14 +35,14 @@ class CriarLivroAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarLivroDTO $criarLivroDTO
+     * @param CriarLivroDto $criarLivroDto
      * @return object
      * 
      */
-    public function execute(CriarLivroDTO $criarLivroDTO) : object {
+    public function execute(CriarLivroDto $criarLivroDto) : object {
 
         // Converto objeto para array
-        $dados = $criarLivroDTO->toArray();
+        $dados = $criarLivroDto->toArray();
 
         // Inserção do registro
         $livro = Livro::create($dados);

@@ -1,6 +1,15 @@
 <?php
 namespace App\BusinessLayer\Features\Series;
 
+use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
+
+// Importo DTOs
+use App\DataLayer\DTOs\ListarSeriesDto;
+
+// Importo validators
+use App\BusinessLayer\Validators\Series\ListarSeriesValidator;
+
 // Importo actions
 use App\BusinessLayer\Actions\Series\ListarSeriesAction;
 
@@ -36,16 +45,37 @@ class ListarSeriesFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @return SerieCollection
+     * @param ListarSeriesDto $listarSeriesDto
+     * @return array
      * 
      */
-    public function execute() : SerieCollection {
+    public function execute(ListarSeriesDto $listarSeriesDto) : array {
+
+        // Converto objeto para array
+        $dados = $listarSeriesDto->toArray();
+
+        // Validação de dados obrigatórios
+        $validador = new ListarSeriesValidator;
+        $validador->execute($dados);
+
+        // Caso os dados NÃO SEJAM válidos
+        if (!$validador->estaLiberado()) {
+
+            // Erro de validação
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
+            );
+
+        }
 
         // Obtenho lista de séries
-        $series = $this->ListarSeriesAction->execute();
+        $series = $this->ListarSeriesAction->execute($listarSeriesDto);
 
         // Retorno
-        return new SerieCollection($series);
+        // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 
+        // Para incluir informações da paginação na resposta usamos getData() junto da collection.
+        return (new SerieCollection($series))->response()->getData(true);
 
     }
 

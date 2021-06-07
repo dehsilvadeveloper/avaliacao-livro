@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarAvaliacaoDTO;
+use App\DataLayer\DTOs\AtualizarAvaliacaoDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Avaliacoes\AtualizarAvaliacaoValidator;
@@ -45,19 +45,18 @@ class AtualizarAvaliacaoFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codAvaliacao
-     * @param AtualizarAvaliacaoDTO $atualizarAvaliacaoDto
+     * @param AtualizarAvaliacaoDto $atualizarAvaliacaoDto
      * @return AvaliacaoResource
      * 
      */
-    public function execute(int $codAvaliacao, AtualizarAvaliacaoDTO $atualizarAvaliacaoDto) : AvaliacaoResource {
+    public function execute(AtualizarAvaliacaoDto $atualizarAvaliacaoDto) : AvaliacaoResource {
 
         // Converto objeto para array
         $dados = $atualizarAvaliacaoDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarAvaliacaoValidator;
-        $validador->execute($codAvaliacao, $dados);
+        $validador->execute($dados['cod_avaliacao'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -71,7 +70,7 @@ class AtualizarAvaliacaoFeature {
         }
 
         // Atualizo informações da avaliação
-        $avaliacao = $this->atualizarAvaliacaoAction->execute($codAvaliacao, $atualizarAvaliacaoDto);
+        $avaliacao = $this->atualizarAvaliacaoAction->execute($atualizarAvaliacaoDto);
 
         // Retorno
         return new AvaliacaoResource($avaliacao);

@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAutorDTO;
-use App\DataLayer\DTOs\AtualizarAutorDTO;
+use App\DataLayer\DTOs\CriarAutorDto;
+use App\DataLayer\DTOs\AtualizarAutorDto;
+use App\DataLayer\DTOs\ListarAutoresDto;
 
 // Importo features
 use App\BusinessLayer\Features\Autores\CriarAutorFeature;
@@ -18,6 +19,7 @@ use App\BusinessLayer\Features\Autores\ApagarAutorFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class AutorController extends Controller {
 
@@ -67,14 +69,28 @@ class AutorController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) {
         
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]); 
+
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de autores
+            $listarAutoresDto = ListarAutoresDto::fromArray($dados);
+
             // Obtenho lista de autores
-            $autores = $this->listarAutoresFeature->execute();
+            $autores = $this->listarAutoresFeature->execute($listarAutoresDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -90,14 +106,15 @@ class AutorController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'autores' => $autores
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($autores);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
 
     }
 
@@ -146,9 +163,7 @@ class AutorController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Autor criado com sucesso',
-            'data' => array(
-                'autor' => $autor
-            )
+            'data' => $autor
         ), ResponseHttpCode::OK);
 
     }
@@ -186,9 +201,7 @@ class AutorController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'autor' => $autor
-            )
+            'data' => $autor
         ), ResponseHttpCode::OK);
 
     }
@@ -215,11 +228,14 @@ class AutorController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_autor'] = $codAutor;
+
             // Gero DTO para atualização do autor
             $atualizarAutorDto = AtualizarAutorDto::fromArray($dados);
 
             // Atualizo informações do autor
-            $autor = $this->atualizarAutorFeature->execute($codAutor, $atualizarAutorDto);
+            $autor = $this->atualizarAutorFeature->execute($atualizarAutorDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -239,9 +255,7 @@ class AutorController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Autor atualizado com sucesso',
-            'data' => array(
-                'autor' => $autor
-            )
+            'data' => $autor
         ), ResponseHttpCode::OK);
 
     }

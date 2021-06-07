@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Generos;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarGeneroDTO;
+use App\DataLayer\DTOs\CriarGeneroDto;
 
 // Importando models
 use App\Models\Genero;
@@ -35,14 +35,14 @@ class CriarGeneroAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarGeneroDTO $criarGeneroDTO
+     * @param CriarGeneroDto $criarGeneroDto
      * @return object
      * 
      */
-    public function execute(CriarGeneroDTO $criarGeneroDTO) : object {
+    public function execute(CriarGeneroDto $criarGeneroDto) : object {
 
         // Converto objeto para array
-        $dados = $criarGeneroDTO->toArray();
+        $dados = $criarGeneroDto->toArray();
 
         // Inserção do registro
         $genero = Genero::create($dados);

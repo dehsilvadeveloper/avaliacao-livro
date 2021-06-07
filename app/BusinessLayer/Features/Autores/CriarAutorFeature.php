@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAutorDTO;
+use App\DataLayer\DTOs\CriarAutorDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Autores\CriarAutorValidator;
@@ -45,11 +45,11 @@ class CriarAutorFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarAutorDTO $criarAutorDto
+     * @param CriarAutorDto $criarAutorDto
      * @return AutorResource
      * 
      */
-    public function execute(CriarAutorDTO $criarAutorDto) : AutorResource {
+    public function execute(CriarAutorDto $criarAutorDto) : AutorResource {
 
         // Converto objeto para array
         $dados = $criarAutorDto->toArray();

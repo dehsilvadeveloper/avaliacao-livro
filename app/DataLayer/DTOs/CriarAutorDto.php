@@ -1,7 +1,7 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class CriarAutorDTO {
+class CriarAutorDto {
 
     /**
      * @var string

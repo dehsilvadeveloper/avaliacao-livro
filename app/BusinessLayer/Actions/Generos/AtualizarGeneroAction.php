@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Generos;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarGeneroDTO;
+use App\DataLayer\DTOs\AtualizarGeneroDto;
 
 // Importando models
 use App\Models\Genero;
@@ -35,24 +35,26 @@ class AtualizarGeneroAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codGenero
-     * @param AtualizarGeneroDTO $atualizarGeneroDTO
+     * @param AtualizarGeneroDto $atualizarGeneroDto
      * @return object
      * 
      */
-    public function execute(int $codGenero, AtualizarGeneroDTO $atualizarGeneroDTO) : object {
+    public function execute(AtualizarGeneroDto $atualizarGeneroDto) : object {
 
         // Converto objeto para array
-        $dados = $atualizarGeneroDTO->toArray();
+        $dados = $atualizarGeneroDto->toArray();
 
         // Localizo gênero
-        $genero = Genero::find($codGenero);
+        $genero = Genero::find($dados['cod_genero']);
 
         if (!$genero) {
 
             throw new \Exception('Gênero não localizado', ResponseHttpCode::NOT_FOUND);
 
         }
+
+        // Não precisamos mais do código, então o removemos
+        unset($dados['cod_genero']);
 
         // Atualizo dados
         $genero->update($dados);

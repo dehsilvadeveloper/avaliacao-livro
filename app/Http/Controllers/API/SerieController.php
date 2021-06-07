@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarSerieDTO;
-use App\DataLayer\DTOs\AtualizarSerieDTO;
+use App\DataLayer\DTOs\CriarSerieDto;
+use App\DataLayer\DTOs\AtualizarSerieDto;
+use App\DataLayer\DTOs\ListarSeriesDto;
 
 // Importo features
 use App\BusinessLayer\Features\Series\CriarSerieFeature;
@@ -18,6 +19,7 @@ use App\BusinessLayer\Features\Series\ApagarSerieFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class SerieController extends Controller {
 
@@ -67,14 +69,28 @@ class SerieController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) {
         
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]); 
+
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de livros
+            $listarSeriesDto = ListarSeriesDto::fromArray($dados);
+
             // Obtenho lista de séries
-            $series = $this->listarSeriesFeature->execute();
+            $series = $this->listarSeriesFeature->execute($listarSeriesDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -90,14 +106,15 @@ class SerieController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'series' => $series
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($series);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
 
     }
 
@@ -142,9 +159,7 @@ class SerieController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Série criada com sucesso',
-            'data' => array(
-                'serie' => $serie
-            )
+            'data' => $serie
         ), ResponseHttpCode::OK);
 
     }
@@ -182,9 +197,7 @@ class SerieController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'serie' => $serie
-            )
+            'data' => $serie
         ), ResponseHttpCode::OK);
 
     }
@@ -207,11 +220,14 @@ class SerieController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_serie'] = $codSerie;
+
             // Gero DTO para atualização da série
             $atualizarSerieDto = AtualizarSerieDto::fromArray($dados);
 
             // Atualizo informações da série
-            $serie = $this->atualizarSerieFeature->execute($codSerie, $atualizarSerieDto);
+            $serie = $this->atualizarSerieFeature->execute($atualizarSerieDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -231,9 +247,7 @@ class SerieController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Série atualizada com sucesso',
-            'data' => array(
-                'serie' => $serie
-            )
+            'data' => $serie
         ), ResponseHttpCode::OK);
 
     }

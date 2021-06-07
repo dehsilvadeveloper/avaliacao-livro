@@ -1,6 +1,15 @@
 <?php
 namespace App\BusinessLayer\Features\Avaliacoes;
 
+use App\BusinessLayer\ResponseHttpCode;
+use App\Exceptions\CamposObrigatoriosInvalidosException;
+
+// Importo DTOs
+use App\DataLayer\DTOs\ListarAvaliacoesDeLivroDto;
+
+// Importo validators
+use App\BusinessLayer\Validators\Avaliacoes\ListarAvaliacoesDeLivroValidator;
+
 // Importo actions
 use App\BusinessLayer\Actions\Avaliacoes\ListarAvaliacoesDeLivroAction;
 
@@ -36,17 +45,37 @@ class ListarAvaliacoesDeLivroFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codLivro
-     * @return AvaliacaoCollection
+     * @param ListarAvaliacoesDeLivroDto $listarAvaliacoesDeLivroDto
+     * @return array
      * 
      */
-    public function execute(int $codLivro) : AvaliacaoCollection {
+    public function execute(ListarAvaliacoesDeLivroDto $listarAvaliacoesDeLivroDto) : array {
 
+        // Converto objeto para array
+        $dados = $listarAvaliacoesDeLivroDto->toArray();
+
+        // Validação de dados obrigatórios
+        $validador = new ListarAvaliacoesDeLivroValidator;
+        $validador->execute($dados);
+
+        // Caso os dados NÃO SEJAM válidos
+        if (!$validador->estaLiberado()) {
+
+            // Erro de validação
+            throw new CamposObrigatoriosInvalidosException(
+                'Dados informados são inválidos', 
+                $validador->pegarErros()
+            );
+
+        }
+        
         // Obtenho lista de avaliações de um determinado livro
-        $avaliacoes = $this->listarAvaliacoesDeLivroAction->execute($codLivro);
+        $avaliacoes = $this->listarAvaliacoesDeLivroAction->execute($listarAvaliacoesDeLivroDto);
 
         // Retorno
-        return new AvaliacaoCollection($avaliacoes);
+        // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 
+        // Para incluir informações da paginação na resposta usamos getData() junto da collection.
+        return (new AvaliacaoCollection($avaliacoes))->response()->getData(true);
 
     }
 

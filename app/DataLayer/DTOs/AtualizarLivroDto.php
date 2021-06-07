@@ -1,7 +1,12 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class AtualizarLivroDTO {
+class AtualizarLivroDto {
+
+    /**
+     * @var int
+     */
+    private $codLivro;
 
     /**
      * @var string
@@ -85,6 +90,7 @@ class AtualizarLivroDTO {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
+        $self->codLivro = $dados['cod_livro'];
         $self->titulo = $dados['titulo'];
         $self->tituloOriginal = $dados['titulo_original'];
         $self->idioma = $dados['idioma'];
@@ -95,9 +101,9 @@ class AtualizarLivroDTO {
         $self->totalPaginas = $dados['total_paginas'];
         $self->tipoCapa = $dados['tipo_capa'];
         $self->codEditora = $dados['cod_editora'];
-        $self->autores = json_decode($dados['autores'], true);
-        $self->generos = json_decode($dados['generos'], true);
-        $self->series = json_decode($dados['series'], true);
+        $self->autores = $dados['autores'];
+        $self->generos = $dados['generos'];
+        $self->series = $dados['series'];
 
         return $self;
 
@@ -114,6 +120,7 @@ class AtualizarLivroDTO {
     public function toArray() : array {
 
         return [
+            'cod_livro' => $this->codLivro,
             'titulo' => $this->titulo,
             'titulo_original' => $this->tituloOriginal,
             'idioma' => $this->idioma,

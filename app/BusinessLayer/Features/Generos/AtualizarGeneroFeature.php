@@ -5,7 +5,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\Exceptions\CamposObrigatoriosInvalidosException;
 
 // Importo DTOs
-use App\DataLayer\DTOs\AtualizarGeneroDTO;
+use App\DataLayer\DTOs\AtualizarGeneroDto;
 
 // Importo validators
 use App\BusinessLayer\Validators\Generos\AtualizarGeneroValidator;
@@ -45,19 +45,18 @@ class AtualizarGeneroFeature {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param int $codGenero
-     * @param AtualizarGeneroDTO $atualizarGeneroDto
+     * @param AtualizarGeneroDto $atualizarGeneroDto
      * @return GeneroResource
      * 
      */
-    public function execute(int $codGenero, AtualizarGeneroDTO $atualizarGeneroDto) : GeneroResource {
+    public function execute(AtualizarGeneroDto $atualizarGeneroDto) : GeneroResource {
 
         // Converto objeto para array
         $dados = $atualizarGeneroDto->toArray();
 
         // Validação de dados obrigatórios
         $validador = new AtualizarGeneroValidator;
-        $validador->execute($codGenero, $dados);
+        $validador->execute($dados['cod_genero'], $dados);
 
         // Caso os dados NÃO SEJAM válidos
         if (!$validador->estaLiberado()) {
@@ -71,7 +70,7 @@ class AtualizarGeneroFeature {
         }
 
         // Atualizo informações do gênero
-        $genero = $this->atualizarGeneroAction->execute($codGenero, $atualizarGeneroDto);
+        $genero = $this->atualizarGeneroAction->execute($atualizarGeneroDto);
 
         // Retorno
         return new GeneroResource($genero);

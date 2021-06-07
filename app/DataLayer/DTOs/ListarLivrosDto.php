@@ -1,17 +1,26 @@
 <?php
 namespace App\DataLayer\DTOs;
 
-class AtualizarGeneroDto {
+class ListarLivrosDto {
 
     /**
      * @var int
      */
-    private $codGenero;
+    private $page;
 
     /**
-     * @var string
+     * @var int
      */
-    private $nome;
+    private $pageSize;
+
+    /**
+     * @var array - vetor com dados para ordenação
+     * @sample array(
+     *      "titulo" => "asc",
+     *      "idioma" => "desc"
+     * )
+     */
+    private $sort;
 
     /**
      * Dinamicamente preenche propriedades do objeto a partir de um array
@@ -23,8 +32,9 @@ class AtualizarGeneroDto {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
-        $self->codGenero = $dados['cod_genero'];
-        $self->nome = $dados['nome'];
+        $self->page = $dados['page'];
+        $self->pageSize = $dados['page_size'];
+        $self->sort = $dados['sort'];
 
         return $self;
 
@@ -41,8 +51,9 @@ class AtualizarGeneroDto {
     public function toArray() : array {
 
         return [
-            'cod_genero' => $this->codGenero,
-            'nome' => $this->nome
+            'page' => $this->page,
+            'page_size' => $this->pageSize,
+            'sort' => $this->sort
         ];
 
     }

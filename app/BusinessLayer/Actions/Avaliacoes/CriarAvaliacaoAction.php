@@ -4,7 +4,7 @@ namespace App\BusinessLayer\Actions\Avaliacoes;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarAvaliacaoDTO;
+use App\DataLayer\DTOs\CriarAvaliacaoDto;
 
 // Importando models
 use App\Models\Avaliacao;
@@ -35,14 +35,14 @@ class CriarAvaliacaoAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param CriarAvaliacaoDTO $criarAvaliacaoDTO
+     * @param CriarAvaliacaoDto $criarAvaliacaoDto
      * @return object
      * 
      */
-    public function execute(CriarAvaliacaoDTO $criarAvaliacaoDTO) : object {
+    public function execute(CriarAvaliacaoDto $criarAvaliacaoDto) : object {
 
         // Converto objeto para array
-        $dados = $criarAvaliacaoDTO->toArray();
+        $dados = $criarAvaliacaoDto->toArray();
 
         // Inserção do registro
         $avaliacao = Avaliacao::create($dados);

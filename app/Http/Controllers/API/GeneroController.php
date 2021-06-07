@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\BusinessLayer\ResponseHttpCode;
 
 // Importo DTOs
-use App\DataLayer\DTOs\CriarGeneroDTO;
-use App\DataLayer\DTOs\AtualizarGeneroDTO;
+use App\DataLayer\DTOs\CriarGeneroDto;
+use App\DataLayer\DTOs\AtualizarGeneroDto;
+use App\DataLayer\DTOs\ListarGenerosDto;
 
 // Importo features
 use App\BusinessLayer\Features\Generos\CriarGeneroFeature;
@@ -18,6 +19,7 @@ use App\BusinessLayer\Features\Generos\ApagarGeneroFeature;
 
 // Importo helpers
 use App\Helpers\ValidacaoHelper;
+use App\Helpers\QueryHelper;
 
 class GeneroController extends Controller {
 
@@ -67,14 +69,28 @@ class GeneroController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index(Request $request) {
+
+        // Capto dados da requisição
+        $dados = $request->only([     
+            'page',  
+            'page_size',
+            'sort'
+        ]);
 
         try {
 
+            // Convertemos de string para array de ordenação de query
+            $dados['sort'] = QueryHelper::converterStringParaArrayDeOrdenacaoDeQuery($dados['sort']);
+
+            // Gero DTO para listagem de gêneros
+            $listarGenerosDto = ListarGenerosDto::fromArray($dados);
+
             // Obtenho lista de gêneros
-            $generos = $this->listarGenerosFeature->execute();
+            $generos = $this->listarGenerosFeature->execute($listarGenerosDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -90,14 +106,15 @@ class GeneroController extends Controller {
 
         }
 
-        // Retorno Sucesso
-        return response()->json(array(
+        // Monto estrutura da resposta, adicionando os recursos recebidos da feature
+        // Para isso fazemos um merge de uma collection com dados básicos com a collection recebida
+        $resposta = collect([
             'success' => true,
-            'message' => null,
-            'data' => array(
-                'generos' => $generos
-            )
-        ), ResponseHttpCode::OK);
+            'message' => null
+        ])->merge($generos);
+
+        // Retorno Sucesso
+        return response()->json($resposta, ResponseHttpCode::OK);
         
     }
 
@@ -142,9 +159,7 @@ class GeneroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Gênero criado com sucesso',
-            'data' => array(
-                'genero' => $genero
-            )
+            'data' => $genero
         ), ResponseHttpCode::OK);
 
     }
@@ -182,9 +197,7 @@ class GeneroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => null,
-            'data' => array(
-                'genero' => $genero
-            )
+            'data' => $genero
         ), ResponseHttpCode::OK);
 
     }
@@ -207,11 +220,14 @@ class GeneroController extends Controller {
 
         try {
 
+            // Adicionamos código ao array
+            $dados['cod_genero'] = $codGenero;
+
             // Gero DTO para atualização do gênero
             $atualizarGeneroDto = AtualizarGeneroDto::fromArray($dados);
 
             // Atualizo informações do gênero
-            $genero = $this->atualizarGeneroFeature->execute($codGenero, $atualizarGeneroDto);
+            $genero = $this->atualizarGeneroFeature->execute($atualizarGeneroDto);
 
         } catch (\Exception | \Error $e) {
               
@@ -231,9 +247,7 @@ class GeneroController extends Controller {
         return response()->json(array(
             'success' => true,
             'message' => 'Gênero atualizado com sucesso',
-            'data' => array(
-                'genero' => $genero
-            )
+            'data' => $genero
         ), ResponseHttpCode::OK);
 
     }
