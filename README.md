@@ -85,7 +85,7 @@ Para autenticação desta API utilizei Laravel Sanctum 2.11 com validação atra
 | http://localhost:8000/api/series/{serie}/livros | GET | series.livros.index | Lista de todos os livros de uma série específica |
 | &nbsp; | &nbsp; | &nbsp; |
 | http://localhost:8000/api/livros | GET | livros.index | Lista de todos os livros |
-| http://localhost:8000/api/livros/pesquisar | GET | livros.pesquisa.index | Lista de livros fruto de uma pesquisa avançada |
+| http://localhost:8000/api/livros/pesquisar | POST | livros.pesquisa.index | Lista de livros fruto de uma pesquisa avançada |
 | http://localhost:8000/api/livros/{livro} | GET | livros.show | Visualiza dados de um livro específico |
 | http://localhost:8000/api/livros | POST | livros.store | Cadastra um novo livro |
 | http://localhost:8000/api/livros/{livro} | PUT | livros.update | Atualiza dados de um livro específico |

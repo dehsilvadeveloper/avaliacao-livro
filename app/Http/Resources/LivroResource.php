@@ -17,7 +17,7 @@ class LivroResource extends JsonResource {
             'cod_livro' => (int) $this->cod_livro,
             'titulo' => $this->titulo,
             'titulo_original' => $this->titulo_original,
-            /*'idioma' => ucfirst($this->idioma),
+            'idioma' => ucfirst($this->idioma),
             'isbn_10' => $this->isbn_10,
             'isbn_13' => $this->isbn_13,
             'data_publicacao' => $this->data_publicacao->format('d/m/Y'),
@@ -39,7 +39,7 @@ class LivroResource extends JsonResource {
                 'generos' => new GeneroCollection($this->whenLoaded('generos')),
                 'series' => new SerieCollection($this->whenLoaded('series')),
                 'avaliacoes' => new AvaliacaoCollection($this->whenLoaded('avaliacoes'))
-            ]*/
+            ]
         ];
 
     }

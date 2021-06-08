@@ -46,6 +46,16 @@ class Usuario extends Authenticatable {
 
 
     // DEFININDO SCOPES ------------------------------------------------------------------------
+    // Exemplo de uso: Usuario::filtro(['usuario' => 'teste'])->get();
+    public function scopeFiltro($query, $params) {
+
+        if (isset($params['usuario']) && $params['usuario'] !== '') {
+			$query->where('usuario', '=', $params['usuario']);
+		}
+
+		return $query;
+        
+    }
 
 
 

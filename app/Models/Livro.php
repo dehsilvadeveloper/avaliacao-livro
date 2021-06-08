@@ -118,6 +118,82 @@ class Livro extends Model {
 
     }
 
+    // Exemplo de uso: Livro::filtro(['titulo' => 'teste', 'idioma' => 'Português'])->get();
+    public function scopeFiltro($query, $params) {
+
+        if (isset($params['titulo']) && $params['titulo'] !== '') {
+			$query->where('titulo', 'LIKE', '%' . $params['titulo'] . '%');
+		}
+
+        if (isset($params['titulo_original']) && $params['titulo_original'] !== '') {
+			$query->where('titulo_original', 'LIKE', '%' . $params['titulo_original'] . '%');
+		}
+
+        if (isset($params['idioma']) && $params['idioma'] !== '') {
+			$query->where('idioma', '=', $params['idioma']);
+		}
+
+        if (isset($params['isbn_10']) && $params['isbn_10'] !== '') {
+			$query->where('isbn_10', '=', $params['isbn_10']);
+		}
+
+        if (isset($params['isbn_13']) && $params['isbn_13'] !== '') {
+			$query->where('isbn_13', '=', $params['isbn_13']);
+		}
+
+        if (isset($params['data_publicacao']) && $params['data_publicacao'] !== '') {
+            $data = date('Y-m-d', strtotime(str_replace('/', '-', $params['data_publicacao'])));
+			$query->where('data_publicacao', '=', $data);
+		}
+
+        if (isset($params['sinopse']) && $params['sinopse'] !== '') {
+			$query->where('sinopse', 'LIKE', '%' . $params['sinopse'] . '%');
+		}
+
+        if (isset($params['total_paginas']) && $params['total_paginas'] !== '') {
+			$query->where('total_paginas', '=', $params['total_paginas']);
+		}
+
+        if (isset($params['tipo_capa']) && $params['tipo_capa'] !== '') {
+			$query->where('tipo_capa', '=', $params['tipo_capa']);
+		}
+
+        if (isset($params['editora']) && $params['editora'] !== '') {
+
+            $query->whereHas('editora', function($q) use($params) {
+                $q->where('nome_fantasia', '=', $params['editora']);
+            });
+
+        }
+
+        if (isset($params['autor']) && $params['autor'] !== '') {
+
+            $query->whereHas('autores', function($q) use($params) {
+                $q->where('nome', 'LIKE', '%' . $params['autor'] . '%');
+            });
+
+        }
+
+        if (isset($params['genero']) && $params['genero'] !== '') {
+
+            $query->whereHas('generos', function($q) use($params) {
+                $q->where('nome', '=', $params['genero']);
+            });
+
+        }
+
+        if (isset($params['serie']) && $params['serie'] !== '') {
+
+            $query->whereHas('series', function($q) use($params) {
+                $q->where('titulo', 'LIKE', '%' . $params['serie'] . '%');
+            });
+
+        }
+
+		return $query;
+        
+    }
+
 
 
     // DEFININDO ACCESSORS ----------------------------------------------------------------------

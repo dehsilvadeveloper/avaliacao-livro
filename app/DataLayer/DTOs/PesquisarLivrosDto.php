@@ -4,6 +4,25 @@ namespace App\DataLayer\DTOs;
 class PesquisarLivrosDto {
 
     /**
+     * @var int
+     */
+    private $page;
+
+    /**
+     * @var int
+     */
+    private $pageSize;
+
+    /**
+     * @var array - vetor com dados para ordenação
+     * @sample array(
+     *      "titulo" => "asc",
+     *      "idioma" => "desc"
+     * )
+     */
+    private $sort;
+
+    /**
      * @var string
      */
     private $titulo;
@@ -51,34 +70,22 @@ class PesquisarLivrosDto {
     /**
      * @var string
      */
-    private $fotoCapa;
+    private $editora;
 
     /**
-     * @var int
+     * @var string
      */
-    private $codEditora;
+    private $autor;
 
     /**
-     * @var array - vetor simples com ids dos autores
-     * @sample array(2, 3)
+     * @var string
      */
-    private $autores;
+    private $genero;
 
     /**
-     * @var array - vetor com ids dos gêneros
-     * @sample array(1, 9, 11)
+     * @var string
      */
-    private $generos;
-
-    /**
-     * @var array - vetor com ids das séries. Pode ser simples ou multidimensional, sendo que o multidimensional possui a coluna "numero_na_serie" dentro de um vetor filho
-     * @sample array(1, 8)
-     * @sample array(
-     *      1 => ['numero_na_serie' => 2],
-     *      8 => ['numero_na_serie' => 9]
-     * )
-     */
-    private $series;
+    private $serie;
 
     /**
      * Dinamicamente preenche propriedades do objeto a partir de um array
@@ -90,6 +97,9 @@ class PesquisarLivrosDto {
     public static function fromArray(array $dados) : self {
 
         $self = new self();
+        $self->page = $dados['page'];
+        $self->pageSize = $dados['page_size'];
+        $self->sort = $dados['sort'];
         $self->titulo = $dados['titulo'];
         $self->tituloOriginal = $dados['titulo_original'];
         $self->idioma = $dados['idioma'];
@@ -99,11 +109,10 @@ class PesquisarLivrosDto {
         $self->sinopse = $dados['sinopse'];
         $self->totalPaginas = $dados['total_paginas'];
         $self->tipoCapa = $dados['tipo_capa'];
-        $self->fotoCapa = $dados['foto_capa'];
-        $self->codEditora = $dados['cod_editora'];
-        /*$self->autores = json_decode($dados['autores'], true);
-        $self->generos = json_decode($dados['generos'], true);
-        $self->series = json_decode($dados['series'], true);*/
+        $self->editora = $dados['editora'];
+        $self->autor = $dados['autor'];
+        $self->genero = $dados['genero'];
+        $self->serie = $dados['serie'];
 
         return $self;
 
@@ -120,6 +129,9 @@ class PesquisarLivrosDto {
     public function toArray() : array {
 
         return [
+            'page' => $this->page,
+            'page_size' => $this->pageSize,
+            'sort' => $this->sort,
             'titulo' => $this->titulo,
             'titulo_original' => $this->tituloOriginal,
             'idioma' => $this->idioma,
@@ -129,11 +141,10 @@ class PesquisarLivrosDto {
             'sinopse' => $this->sinopse,
             'total_paginas' => $this->totalPaginas,
             'tipo_capa' => $this->tipoCapa,
-            'foto_capa' => $this->fotoCapa,
-            'cod_editora' => $this->codEditora,
-            /*'autores' => $this->autores,
-            'generos' => $this->generos,
-            'series' => $this->series*/
+            'editora' => $this->editora,
+            'autor' => $this->autor,
+            'genero' => $this->genero,
+            'serie' => $this->serie
         ];
 
     }

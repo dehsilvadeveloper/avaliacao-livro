@@ -69,11 +69,8 @@ class EfetuarLoginFeature {
 
         }
 
-        // Monto critérios da pesquisa
-        $criterio[] = array('usuario', '=', $dados['usuario']);
-
         // Busco usuário no BD
-        $usuario = $this->localizarUsuarioAction->execute($criterio);
+        $usuario = $this->localizarUsuarioAction->execute($efetuarLoginDto);
 
         // Verifico se o usuário existe
         if (!$usuario) {
@@ -100,7 +97,7 @@ class EfetuarLoginFeature {
             'token' => $token,
             'usuario' => new UsuarioResource($usuario)
         );
-
+        
     }
 
 

@@ -35,7 +35,7 @@ Route::apiResource('generos', 'App\Http\Controllers\Api\GeneroController');
 Route::apiResource('series', 'App\Http\Controllers\Api\SerieController');
 //Route::apiResource('series.livros', 'App\Http\Controllers\Api\LivroDeSerieController')->only(['index']);
 
-Route::get('livros/pesquisar', 'App\Http\Controllers\Api\PesquisaLivroController@index')->name('livros.pesquisa.index');
+Route::post('livros/pesquisar', 'App\Http\Controllers\Api\PesquisaLivroController@index')->name('livros.pesquisa.index');
 //Route::put('livros/{livro}/foto-capa', 'App\Http\Controllers\Api\FotoCapaDeLivroController@update')->name('livros.foto-capa.update');
 Route::apiResource('livros', 'App\Http\Controllers\Api\LivroController');
 

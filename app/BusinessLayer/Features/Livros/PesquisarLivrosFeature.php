@@ -57,7 +57,7 @@ class PesquisarLivrosFeature {
         // Converto objeto para array
         $dados = $pesquisarLivrosDto->toArray();
 
-        /*// Validação de dados obrigatórios
+        // Validação de dados obrigatórios
         $validador = new PesquisarLivrosValidator;
         $validador->execute($dados);
 
@@ -70,30 +70,10 @@ class PesquisarLivrosFeature {
                 $validador->pegarErros()
             );
 
-        }*/
-
-        $criterio = array();
-
-        if ($dados['titulo'] != '') {
-            array_push($criterio, array('titulo', 'LIKE', '%' . $dados['titulo'] . '%'));
         }
-
-        if ($dados['titulo_original'] != '') {
-            array_push($criterio, array('titulo_original', 'LIKE', '%' . $dados['titulo_original'] . '%'));
-        }
-
-        if ($dados['idioma'] != '') {
-            array_push($criterio, array('idioma', '=', $dados['idioma']));
-        }
-
-        // Monto critérios da pesquisa TORNAR DINAMICO
-        /*$criterio = [
-            ['cod_ddd_origem', '=', $dados['cod_ddd_origem']],
-            ['cod_ddd_destino', '=', $dados['cod_ddd_destino']]
-        ];*/
 
         // Pesquisa por livros utilizando critério informado
-        $livros = $this->PesquisarLivrosAction->execute($criterio);
+        $livros = $this->PesquisarLivrosAction->execute($pesquisarLivrosDto);
 
         // Retorno
         // Em caso de necessidade de paginação, caso esteja usando apenas collection, os dados são retornados sem informações de paginação (total de paginas, página atual, etc). 

@@ -3,6 +3,9 @@ namespace App\BusinessLayer\Actions\Usuarios;
 
 use App\BusinessLayer\ResponseHttpCode;
 
+// Importo DTOs
+use App\DataLayer\DTOs\PesquisarUsuariosDto;
+
 // Importando models
 use App\Models\Usuario;
 
@@ -32,36 +35,45 @@ class PesquisarUsuariosAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param array $criterio
-     * @return object|null
+     * @param PesquisarUsuariosDto $pesquisarUsuariosDto
+     * @return object
      * 
      */
-    public function execute(array $criterio) {
+    public function execute(PesquisarUsuariosDto $pesquisarUsuariosDto) : object {
 
+        // Converto objeto para array
+        $dados = $pesquisarUsuariosDto->toArray();
+
+        // Monto query
         $query = Usuario::query();
+        $query->filtro($dados);
 
-        if ($criterio != '' and !is_array($criterio)) {
+        // Verificamos se devemos ordenar o resultado por alguma coluna (ou colunas) específica
+        if ($dados['sort'] != '') {
 
-            throw new \Exception('Critérios de pesquisa inválidos', ResponseHttpCode::BAD_REQUEST);
+            foreach ($dados['sort'] as $chave => $valor) :
 
-        }
-
-        if (count($criterio) == 1) {
-
-            $query->where($criterio[0][0], $criterio[0][1], $criterio[0][2]);
-
-        } elseif (count($criterio) > 1) {
-
-            foreach ($criterio as $c) :
-
-                $query->where($c[0], $c[1], $c[2]);
+                // Geramos ordenação de acordo com a coluna atual da iteração
+                // Nesta caso chave é igual a coluna e valor é igual ao tipo de ordenação (asc ou desc)
+                $query->orderBy($chave, $valor);
 
             endforeach;
 
         }
 
-        $usuarios = $query->get();
+        // Verificamos se a opção "page_size" está vazia
+        if ($dados['page_size'] == '') {
 
+            // Limitamos o total de registros que podem ser obtidos
+            // Se o total de registros no banco de dados for muito grande, isso vai evitar que a requisição falhe por causa de tempo de processamento
+            $query->limit(1000);
+
+        }
+
+        // Obtenho resultado final, verificando se devemos paginá-lo ou não
+        $usuarios = ($dados['page_size'] != '') ? $query->paginate($dados['page_size']) : $query->get();
+
+        // Retorno
         return $usuarios;
 
     }

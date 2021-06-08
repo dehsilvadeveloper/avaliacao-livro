@@ -3,6 +3,9 @@ namespace App\BusinessLayer\Actions\Usuarios;
 
 use App\BusinessLayer\ResponseHttpCode;
 
+// Importo DTOs
+use App\DataLayer\DTOs\EfetuarLoginDto;
+
 // Importando models
 use App\Models\Usuario;
 
@@ -32,36 +35,26 @@ class LocalizarUsuarioAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param array $criterio
+     * @param EfetuarLoginDto $efetuarLoginDto
      * @return object|null
      * 
      */
-    public function execute(array $criterio) {
+    public function execute(EfetuarLoginDto $efetuarLoginDto) {
 
+        // Converto objeto para array
+        $dados = $efetuarLoginDto->toArray();
+
+        // Removo colunas desnecessárias para pesquisa
+        unset($dados['password']);
+
+        // Monto query
         $query = Usuario::query();
+        $query->filtro($dados);
 
-        if ($criterio != '' and !is_array($criterio)) {
-
-            throw new \Exception('Critérios de pesquisa inválidos', ResponseHttpCode::BAD_REQUEST);
-
-        }
-
-        if (count($criterio) == 1) {
-
-            $query->where($criterio[0][0], $criterio[0][1], $criterio[0][2]);
-
-        } elseif (count($criterio) > 1) {
-
-            foreach ($criterio as $c) :
-
-                $query->where($c[0], $c[1], $c[2]);
-
-            endforeach;
-
-        }
-
+        // Obtenho resultado final
         $usuario = $query->first();
 
+        // Retorno
         return $usuario;
 
     }

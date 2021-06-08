@@ -13,12 +13,6 @@ use Laravel\Sanctum\Sanctum;
 use App\Models\Usuario;
 use App\Models\Editora;
 
-/*
-Ideias:
-- testAvaliacaoDeLivroQueNaoExisteNaoPodeSerCriada
-- testAvaliacaoNaoPodeSerCriadaSemUsuario
-*/
-
 class EditoraTest extends TestCase {
 
     use Refreshdatabase;

@@ -52,8 +52,7 @@ class PesquisaLivroController extends Controller {
         $dados = $request->only([     
             'page',  
             'page_size',
-            'sort',
-            'cod_editora',  
+            'sort', 
             'titulo',
             'titulo_original',
             'idioma',
@@ -63,7 +62,11 @@ class PesquisaLivroController extends Controller {
             'sinopse',
             'total_paginas',
             'tipo_capa',
-            'foto_capa'
+            'foto_capa',
+            'editora',
+            'autor',
+            'genero',
+            'serie'
         ]); 
  
         try {

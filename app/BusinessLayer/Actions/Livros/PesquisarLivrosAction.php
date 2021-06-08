@@ -3,6 +3,9 @@ namespace App\BusinessLayer\Actions\Livros;
 
 use App\BusinessLayer\ResponseHttpCode;
 
+// Importo DTOs
+use App\DataLayer\DTOs\PesquisarLivrosDto;
+
 // Importando models
 use App\Models\Livro;
 
@@ -32,52 +35,48 @@ class PesquisarLivrosAction {
      * Executa tarefa única da classe
      *
      * @access public
-     * @param array $criterio
-     * @return object|null
+     * @param PesquisarLivrosDto $pesquisarLivrosDto
+     * @return object
      * 
      */
-    public function execute(array $criterio) {
+    public function execute(PesquisarLivrosDto $pesquisarLivrosDto) : object {
 
+        // Converto objeto para array
+        $dados = $pesquisarLivrosDto->toArray();
+
+        // Monto query
         $query = Livro::query();
+        $query->with(['autores', 'generos', 'series']);
+        $query->withCount('avaliacoes');
+        $query->filtro($dados);
 
-        if ($criterio != '' and !is_array($criterio)) {
+        // Verificamos se devemos ordenar o resultado por alguma coluna (ou colunas) específica
+        if ($dados['sort'] != '') {
 
-            throw new \Exception('Critérios de pesquisa inválidos', ResponseHttpCode::BAD_REQUEST);
+            foreach ($dados['sort'] as $chave => $valor) :
 
-        }
-
-        if (count($criterio) == 1) {
-
-            $query->where($criterio[0][0], $criterio[0][1], $criterio[0][2]);
-
-        } elseif (count($criterio) > 1) {
-
-            foreach ($criterio as $c) :
-
-                $query->where($c[0], $c[1], $c[2]);
+                // Geramos ordenação de acordo com a coluna atual da iteração
+                // Nesta caso chave é igual a coluna e valor é igual ao tipo de ordenação (asc ou desc)
+                $query->orderBy($chave, $valor);
 
             endforeach;
 
-        } else {
+        }
 
-            throw new \Exception('Nenhum critério de pesquisa foi informado', ResponseHttpCode::BAD_REQUEST);
+        // Verificamos se a opção "page_size" está vazia
+        if ($dados['page_size'] == '') {
+
+            // Limitamos o total de registros que podem ser obtidos
+            // Se o total de registros no banco de dados for muito grande, isso vai evitar que a requisição falhe por causa de tempo de processamento
+            $query->limit(1000);
 
         }
 
-        //$livros = $query->get();
-        $livros = $query->paginate(2);
+        // Obtenho resultado final, verificando se devemos paginá-lo ou não
+        $livros = ($dados['page_size'] != '') ? $query->paginate($dados['page_size']) : $query->get();
 
+        // Retorno
         return $livros;
-
-        /*
-        $livros = Livro::with(['autores', 'generos', 'series'])
-                       ->withCount('avaliacoes')
-                       ->filter($filters) // scope
-                       ->paginate(2);
-
-        return $livros;
-        return LivroSearch::apply($filters); // ou ::apply($dados)
-        */
 
     }
 
