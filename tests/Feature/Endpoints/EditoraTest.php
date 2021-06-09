@@ -8,7 +8,7 @@ use App\BusinessLayer\ResponseHttpCode;
 
 // Importo Sanctum
 use Laravel\Sanctum\Sanctum;
-
+use DB;
 // Importo models
 use App\Models\Usuario;
 use App\Models\Editora;
@@ -16,6 +16,19 @@ use App\Models\Editora;
 class EditoraTest extends TestCase {
 
     use Refreshdatabase;
+
+    /**
+     * Método para limpar registros temporários após cada execução de teste
+     *
+     * @return void
+     */
+    protected function tearDown() : void {
+
+        Editora::truncate();
+
+    }
+
+
 
     /**
      * Método de teste
@@ -169,10 +182,8 @@ class EditoraTest extends TestCase {
             'success' => true,
             'message' => 'Editora criada com sucesso',
             'data' => array(
-                'editora' => array(
-                    'nome_fantasia' => 'Saraiva',
-                    'website' => 'https://www.saraiva.com.br'
-                )
+                'nome_fantasia' => 'Saraiva',
+                'website' => 'https://www.saraiva.com.br'
             )
         ]);
 
@@ -181,13 +192,6 @@ class EditoraTest extends TestCase {
             'nome_fantasia' => 'Saraiva',
             'website' => 'https://www.saraiva.com.br'
         ]);
-
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $response->getData()->data->editora->cod_editora
-        );
-
-        Editora::destroy($ids_para_remover);
 
     }
 
@@ -230,30 +234,154 @@ class EditoraTest extends TestCase {
         $response->assertStatus(ResponseHttpCode::OK);
 
         // Verifico estrutura da resposta
-        $response->assertJson([
-            'success' => true,
-            'message' => null,
-            'data' => array(
-                'editoras' => array(
-                    array(
-                        'nome_fantasia' => 'Rocco',
-                        'website' => 'https://www.rocco.com.br'
-                    ),
-                    array(
-                        'nome_fantasia' => 'JBC',
-                        'website' => 'https://www.jbc.com.br'
-                    )
-                )
-            )
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'cod_editora',
+                    'nome_fantasia',
+                    'website',
+                    'criado_em',
+                    'atualizado_em'
+                ]
+            ],
+        ]);
+        
+        $response->assertJsonFragment([
+            'nome_fantasia' => 'Rocco',
+            'website' => 'https://www.rocco.com.br'
         ]);
 
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora,
-            $editora2->cod_editora
+        $response->assertJsonFragment([
+            'nome_fantasia' => 'JBC',
+            'website' => 'https://www.jbc.com.br'
+        ]);
+
+    }
+
+
+
+    /**
+     * Método de teste
+     *
+     * @return void
+     */
+    public function testEditorasPodemSerListadasComPaginacao() {
+
+        $this->withoutExceptionHandling();
+
+        // Criamos um usuário apenas para o teste
+        $usuario = Usuario::factory()->make();
+
+        // Autenticamos usuário com SANCTUM
+        Sanctum::actingAs($usuario, ['*']);
+
+        // Criamos registros apenas para o teste
+        $editora1 = Editora::factory()->create([
+            'nome_fantasia' => 'Rocco',
+            'website' => 'https://www.rocco.com.br'
+        ]);
+
+        $editora2 = Editora::factory()->create([
+            'nome_fantasia' => 'JBC',
+            'website' => 'https://www.jbc.com.br'
+        ]);
+
+        $editora3 = Editora::factory()->create([
+            'nome_fantasia' => 'Kadokawa',
+            'website' => 'https://www.kadokawa.com.br'
+        ]);
+
+        $dados_paginacao = array(
+            'page' => 1,
+            'page_size' => 2,
+            'sort' => 'nome_fantasia'
         );
 
-        Editora::destroy($ids_para_remover);
+        // Executamos requisição ao endpoint
+        $response = $this->call(
+            'GET', 
+            '/api/editoras', 
+            $dados_paginacao
+        );
+
+        // Verifico código de status da resposta
+        $response->assertStatus(ResponseHttpCode::OK);
+
+        // Verifico estrutura da resposta
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'cod_editora',
+                    'nome_fantasia',
+                    'website',
+                    'criado_em',
+                    'atualizado_em'
+                ]
+            ],
+            'links' => [
+                'first',
+                'last',
+                'prev',
+                'next'
+            ],
+            'meta' => [
+                'current_page',
+                'from',
+                'last_page',
+                'links',
+                'path',
+                'per_page',
+                'to',
+                'total'
+            ]
+        ]);
+
+        $response->assertJsonFragment([
+            'nome_fantasia' => 'JBC',
+            'website' => 'https://www.jbc.com.br'
+        ]);
+        
+        $response->assertJsonFragment([
+            'nome_fantasia' => 'Kadokawa',
+            'website' => 'https://www.kadokawa.com.br'
+        ]);
+
+    }
+
+
+
+    /**
+     * Método de teste
+     *
+     * @return void
+     */
+    public function testEditoraQueNaoExisteNaoPodeSerVisualizada() {
+
+        $this->withoutExceptionHandling();
+
+        // Criamos um usuário apenas para o teste
+        $usuario = Usuario::factory()->make();
+
+        // Autenticamos usuário com SANCTUM
+        Sanctum::actingAs($usuario, ['*']);
+
+        // Executamos requisição ao endpoint
+        $response = $this->get(
+            '/api/editoras/' . rand(1000, 2000), 
+            [], 
+            ['Accept' => 'application/json']
+        );
+
+        // Verifico código de status da resposta
+        $response->assertStatus(ResponseHttpCode::NOT_FOUND);
+
+        // Verifico estrutura da resposta
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Editora não localizada',
+            'errors' => null,
+            'data' => null
+        ]);
 
     }
 
@@ -276,8 +404,8 @@ class EditoraTest extends TestCase {
 
         // Criamos registros apenas para o teste
         $editora1 = Editora::factory()->create([
-            'nome_fantasia' => 'Rocco',
-            'website' => 'https://www.rocco.com.br'
+            'nome_fantasia' => 'Marvel',
+            'website' => 'https://www.marvel.com.br'
         ]);
 
         // Executamos requisição ao endpoint
@@ -295,19 +423,10 @@ class EditoraTest extends TestCase {
             'success' => true,
             'message' => null,
             'data' => array(
-                'editora' => array(
-                    'nome_fantasia' => 'Rocco',
-                    'website' => 'https://www.rocco.com.br'
-                )
+                'nome_fantasia' => 'Marvel',
+                'website' => 'https://www.marvel.com.br'
             )
         ]);
-
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
-        );
-
-        Editora::destroy($ids_para_remover);
 
     }
 
@@ -341,13 +460,6 @@ class EditoraTest extends TestCase {
 
         // Verifico código de status da resposta
         $response->assertStatus(ResponseHttpCode::AUTHENTICATION_FAILED);
-
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
-        );
-
-        Editora::destroy($ids_para_remover);
 
     }
 
@@ -393,13 +505,6 @@ class EditoraTest extends TestCase {
             ],
             'data' => null
         ]);
-
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
-        );
-
-        Editora::destroy($ids_para_remover);
 
     }
 
@@ -451,12 +556,48 @@ class EditoraTest extends TestCase {
             'data' => null
         ]);
 
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
+    }
+
+
+
+    /**
+     * Método de teste
+     *
+     * @return void
+     */
+    public function testEditoraQueNaoExisteNaoPodeSerAtualizada() {
+
+        $this->withoutExceptionHandling();
+
+        // Criamos um usuário apenas para o teste
+        $usuario = Usuario::factory()->make();
+
+        // Autenticamos usuário com SANCTUM
+        Sanctum::actingAs($usuario, ['*']);
+
+        // Definimos dados que serão atualizados
+        $dados = array(
+            'nome_fantasia' => 'Image Comics',
+            'website' => 'https://www.imagecomics.com.br'
         );
 
-        Editora::destroy($ids_para_remover);
+        // Executamos requisição ao endpoint
+        $response = $this->put(
+            '/api/editoras/' . rand(1000, 2000), 
+            $dados, 
+            ['Accept' => 'application/json']
+        );
+
+        // Verifico código de status da resposta
+        $response->assertStatus(ResponseHttpCode::NOT_FOUND);
+
+        // Verifico estrutura da resposta
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Editora não localizada',
+            'errors' => null,
+            'data' => null
+        ]);
 
     }
 
@@ -479,14 +620,14 @@ class EditoraTest extends TestCase {
 
         // Criamos registros apenas para o teste
         $editora1 = Editora::factory()->create([
-            'nome_fantasia' => 'Rocco',
-            'website' => 'https://www.rocco.com.br'
+            'nome_fantasia' => 'DC Comics',
+            'website' => 'https://www.dccomics.com.br'
         ]);
 
         // Definimos dados que serão atualizados
         $dados = array(
-            'nome_fantasia' => 'Saraiva',
-            'website' => 'https://www.saraiva.com.br'
+            'nome_fantasia' => 'Image Comics',
+            'website' => 'https://www.imagecomics.com.br'
         );
 
         // Executamos requisição ao endpoint
@@ -504,19 +645,10 @@ class EditoraTest extends TestCase {
             'success' => true,
             'message' => 'Editora atualizada com sucesso',
             'data' => array(
-                'editora' => array(
-                    'nome_fantasia' => 'Saraiva',
-                    'website' => 'https://www.saraiva.com.br'
-                )
+                'nome_fantasia' => 'Image Comics',
+                'website' => 'https://www.imagecomics.com.br'
             )
         ]);
-
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
-        );
-
-        Editora::destroy($ids_para_remover);
 
     }
 
@@ -545,12 +677,42 @@ class EditoraTest extends TestCase {
         // Verifico código de status da resposta
         $response->assertStatus(ResponseHttpCode::AUTHENTICATION_FAILED);
 
-        // Removo registros utilizados durante o teste
-        $ids_para_remover = array(
-            $editora1->cod_editora
+    }
+
+
+
+    /**
+     * Método de teste
+     *
+     * @return void
+     */
+    public function testEditoraQueNaoExisteNaoPodeSerApagada() {
+
+        $this->withoutExceptionHandling();
+
+        // Criamos um usuário apenas para o teste
+        $usuario = Usuario::factory()->make();
+
+        // Autenticamos usuário com SANCTUM
+        Sanctum::actingAs($usuario, ['*']);
+
+        // Executamos requisição ao endpoint
+        $response = $this->delete(
+            '/api/editoras/' . rand(1000, 2000), 
+            [], 
+            ['Accept' => 'application/json']
         );
 
-        Editora::destroy($ids_para_remover);
+        // Verifico código de status da resposta
+        $response->assertStatus(ResponseHttpCode::NOT_FOUND);
+
+        // Verifico estrutura da resposta
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Editora não localizada',
+            'errors' => null,
+            'data' => null
+        ]);
 
     }
 
@@ -573,8 +735,8 @@ class EditoraTest extends TestCase {
 
         // Criamos registros apenas para o teste
         $editora1 = Editora::factory()->create([
-            'nome_fantasia' => 'JBC',
-            'website' => 'https://www.jbc.com.br'
+            'nome_fantasia' => 'MDM',
+            'website' => 'https://www.mdm.com.br'
         ]);
 
         // Executamos requisição ao endpoint
@@ -589,8 +751,8 @@ class EditoraTest extends TestCase {
 
         // Verifico se o registro não existe no banco de dados
         $this->assertDatabaseMissing('editora', [
-            'nome_fantasia' => 'JBC',
-            'website' => 'https://www.jbc.com.br'
+            'nome_fantasia' => 'MDM',
+            'website' => 'https://www.mdm.com.br'
         ]);
 
     }

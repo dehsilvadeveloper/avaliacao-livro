@@ -12,7 +12,11 @@ abstract class TestCase extends BaseTestCase {
     /*public function setUp() : void {
 
         parent::setUp();
-        Artisan::call('migrate');
+        
+        if (!static::$migrationsRun) {
+            Artisan::call('migrate');
+            static::$migrationsRun = true;
+        }
 
     }*/
 
