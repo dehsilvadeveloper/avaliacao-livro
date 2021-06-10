@@ -7,6 +7,7 @@ use App\BusinessLayer\ResponseHttpCode;
 use App\DataLayer\DTOs\ListarAvaliacoesDeLivroDto;
 
 // Importando models
+use App\Models\Livro;
 use App\Models\Avaliacao;
 
 class ListarAvaliacoesDeLivroAction {
@@ -43,6 +44,15 @@ class ListarAvaliacoesDeLivroAction {
 
         // Converto objeto para array
         $dados = $listarAvaliacoesDeLivroDto->toArray();
+
+        // Localizo livro
+        $livro = Livro::find($dados['cod_livro']);
+
+        if (!$livro) {
+
+            throw new \Exception('Livro não localizado', ResponseHttpCode::NOT_FOUND);
+
+        }
 
         // Monto query
         $query = Avaliacao::query();

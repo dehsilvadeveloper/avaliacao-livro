@@ -8,7 +8,7 @@ use App\BusinessLayer\ResponseHttpCode;
 
 // Importo Sanctum
 use Laravel\Sanctum\Sanctum;
-use DB;
+
 // Importo models
 use App\Models\Usuario;
 use App\Models\Editora;
@@ -35,7 +35,7 @@ class EditoraTest extends TestCase {
      *
      * @return void
      */
-    public function testEditoraNaoPodeSerCriadaPorUsuarioNaoAutenticado() {
+    public function testEditoraNaoPodeSerCriadaPorUsuarioDeApiNaoAutenticado() {
 
         // Definimos dados que serão inseridos
         $dados = array(
@@ -235,6 +235,8 @@ class EditoraTest extends TestCase {
 
         // Verifico estrutura da resposta
         $response->assertJsonStructure([
+            'success',
+            'message',
             'data' => [
                 '*' => [
                     'cod_editora',
@@ -243,7 +245,7 @@ class EditoraTest extends TestCase {
                     'criado_em',
                     'atualizado_em'
                 ]
-            ],
+            ]
         ]);
         
         $response->assertJsonFragment([
@@ -437,7 +439,7 @@ class EditoraTest extends TestCase {
      *
      * @return void
      */
-    public function testEditoraNaoPodeSerAtualizadaPorUsuarioNaoAutenticado() {
+    public function testEditoraNaoPodeSerAtualizadaPorUsuarioDeApiNaoAutenticado() {
 
         // Criamos registros apenas para o teste
         $editora1 = Editora::factory()->create([
@@ -659,7 +661,7 @@ class EditoraTest extends TestCase {
      *
      * @return void
      */
-    public function testEditoraNaoPodeSerApagadaPorUsuarioNaoAutenticado() {
+    public function testEditoraNaoPodeSerApagadaPorUsuarioDeApiNaoAutenticado() {
 
         // Criamos registros apenas para o teste
         $editora1 = Editora::factory()->create([

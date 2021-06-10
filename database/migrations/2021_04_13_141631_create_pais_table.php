@@ -3,8 +3,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use Database\Seeders\PaisTableSeeder;
-
 class CreatePaisTable extends Migration {
 
     /**
@@ -27,10 +25,6 @@ class CreatePaisTable extends Migration {
                 $table->string('codigo', 3);
 
             });
-
-            // Alimentando tabela com dados padrão
-            $seeder = new PaisTableSeeder();
-            $seeder->run();
 
         }
 

@@ -25,7 +25,7 @@ class CreateAutorTable extends Migration {
                 $table->string('nome', 100);
                 $table->date('data_nascimento')->nullable();
                 $table->string('website', 100)->nullable();
-                $table->string('twitter', 100)->nullable();
+                $table->string('twitter', 200)->nullable();
                 $table->datetime('created_at')->useCurrent();
                 $table->datetime('updated_at')->nullable();
 
