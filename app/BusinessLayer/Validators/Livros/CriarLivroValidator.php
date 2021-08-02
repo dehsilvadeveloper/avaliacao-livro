@@ -42,7 +42,7 @@ class CriarLivroValidator {
         'idioma.required' => 'É obrigatório informar o campo IDIOMA.',
         'idioma.min' => 'O campo IDIOMA precisa ter no mínimo 3 caracteres.',
         'data_publicacao.required' => 'É obrigatório informar o campo DATA DA PUBLICAÇÃO',
-        'data_publicacao.date' => 'O campo DATA DA PUBLICAÇÃO dve conter uma data válida.',
+        'data_publicacao.date' => 'O campo DATA DA PUBLICAÇÃO deve conter uma data válida.',
         'sinopse.required' => 'É obrigatório informar o campo SINOPSE.',
         'sinopse.min' => 'O campo SINOPSE precisa ter no mínimo 10 caracteres.',
         'total_paginas.required' => 'É obrigatório informar o campo TOTAL DE PÁGINAS',

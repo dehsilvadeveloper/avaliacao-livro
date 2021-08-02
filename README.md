@@ -12,12 +12,16 @@ Para autenticação desta API utilizei Laravel Sanctum 2.11 com validação atra
 
 ## Inicialização deste projeto
 
-#### *Instalação de dependências:*
+#### *Instalação:*
 
 Abra uma janela de terminal na raiz da pasta do projeto e utilize os comandos a seguir:
 
 ```shell
+cp .env.example .env
+
 composer install
+
+php artisan key:generate
 ```
 
 #### *Conexão com banco de dados:*

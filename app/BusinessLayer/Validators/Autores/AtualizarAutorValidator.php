@@ -9,12 +9,13 @@ class AtualizarAutorValidator {
     private $sucesso;
     private $errosValidacao;
     private $regras = [
-        'cod_pais' => 'required'
+        'cod_pais' => 'required|exists:pais,cod_pais'
     ];
     private $mensagens = [
         'nome.required' => 'É obrigatório informar o campo NOME.',
         'nome.unique' => 'Este NOME já foi utilizado por outro item.',
-        'cod_pais.required' => 'É obrigatório informar o campo PAÍS.'
+        'cod_pais.required' => 'É obrigatório informar o campo PAÍS.',
+        'cod_pais.exists' => 'O PAÍS informado não pôde ser localizado. É necessário informar um PAÍS válido.'
     ];
 
     /**
